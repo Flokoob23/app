@@ -1,7 +1,5 @@
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 
-let atletas = [];
-
 document.addEventListener('DOMContentLoaded', () => {
   const bienvenida = document.getElementById('pantallaBienvenida');
   const gimnasio = document.getElementById('pantallaGimnasio');
@@ -27,15 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     Papa.parse(accesoUrl, {
       download: true,
-      header: true,
+      header: false,  // <---- Aquí ponemos false para NO usar encabezados
       complete: function(results) {
-        atletas = results.data;
+        const data = results.data;
 
-        // Buscar atleta coincidente
-        const atleta = atletas.find(a => a.DNI === dni && a.Clave === clave);
+        // Encontrar fila donde dni (col 0) y clave (col 1) coinciden
+        const atletaFila = data.find(row => row[0] === dni && row[1] === clave);
 
-        if (atleta) {
-          // Mostrar perfil
+        if (atletaFila) {
+          // Datos asumidos:
+          // dni = row[0], clave = row[1], nombre = row[2], foto = row[3]
+          const atleta = {
+            DNI: atletaFila[0],
+            Clave: atletaFila[1],
+            Nombre: atletaFila[2] || 'Atleta',
+            Foto: atletaFila[3] || 'https://via.placeholder.com/150?text=Sin+Foto'
+          };
           mostrarPerfil(atleta);
         } else {
           alert('❌ DNI o clave incorrectos');
@@ -51,10 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
     gimnasio.classList.add('hidden');
     perfil.classList.remove('hidden');
 
-    document.getElementById('nombreAtleta').textContent = atleta.Nombre || 'Atleta';
-    document.getElementById('fotoAtleta').src = atleta.Foto || 'https://via.placeholder.com/150?text=Sin+Foto';
+    document.getElementById('nombreAtleta').textContent = atleta.Nombre;
+    document.getElementById('fotoAtleta').src = atleta.Foto;
   }
 
-  // Hacemos visible la función mostrarPerfil fuera
   window.mostrarPerfil = mostrarPerfil;
 });
