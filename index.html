@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FLOKOOB – App de Entrenamiento</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+  <!-- Pantalla 1: Intro FLOKOOB -->
+  <div id="pantallaBienvenida" class="pantalla pantalla-negra">
+    <h1 class="titulo-intro">FLOKOOB - APP DE ENTRENAMIENTO</h1>
+    <img src="https://i.imgur.com/QyPccnt.png" alt="Logo FLOKOOB" class="logo-intro" />
+  </div>
+
+  <!-- Pantalla 2: Gimnasio -->
+  <div id="pantallaGimnasio" class="pantalla pantalla-naranja hidden">
+    <h2 class="nombre-gimnasio">TROTADORES ELOY</h2>
+    <img src="https://i.imgur.com/YOUR_TEMP_LOGO.png" alt="Logo Trotadores" class="logo-gimnasio" />
+    <button id="btnIniciarSesion" class="btn">INICIAR SESIÓN</button>
+
+    <div id="formLogin" class="login-form hidden">
+      <input type="text" id="dniInput" placeholder="DNI" />
+      <input type="password" id="claveInput" placeholder="Clave" />
+      <button id="btnLogin">Acceder</button>
+    </div>
+  </div>
+
+  <!-- Pantalla 3: Perfil del Atleta -->
+  <div id="pantallaPerfil" class="pantalla hidden">
+    <div class="perfil">
+      <img id="fotoAtleta" class="foto-perfil" src="" alt="Foto" />
+      <h2 id="nombreAtleta"></h2>
+      <div class="botones-perfil">
+        <button>ENTRENAMIENTOS</button>
+        <button>REGISTROS</button>
+        <button>HISTORIAL EN CARRERAS</button>
+        <button>PAGO DE CUOTA</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
