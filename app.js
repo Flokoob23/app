@@ -25,16 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     Papa.parse(accesoUrl, {
       download: true,
-      header: false,  // <---- Aquí ponemos false para NO usar encabezados
+      header: false,
       complete: function(results) {
         const data = results.data;
 
-        // Encontrar fila donde dni (col 0) y clave (col 1) coinciden
         const atletaFila = data.find(row => row[0] === dni && row[1] === clave);
 
         if (atletaFila) {
-          // Datos asumidos:
-          // dni = row[0], clave = row[1], nombre = row[2], foto = row[3]
           const atleta = {
             DNI: atletaFila[0],
             Clave: atletaFila[1],
@@ -53,7 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function mostrarPerfil(atleta) {
+    const bienvenida = document.getElementById('pantallaBienvenida');
+    const gimnasio = document.getElementById('pantallaGimnasio');
+    const perfil = document.getElementById('pantallaPerfil');
+
     gimnasio.classList.add('hidden');
+    bienvenida.classList.add('hidden');
     perfil.classList.remove('hidden');
 
     document.getElementById('nombreAtleta').textContent = atleta.Nombre;
