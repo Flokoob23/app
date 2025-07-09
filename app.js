@@ -3,9 +3,9 @@ const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u
 let atletas = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Pantalla inicial (FLOKOOB)
   const bienvenida = document.getElementById('pantallaBienvenida');
   const gimnasio = document.getElementById('pantallaGimnasio');
+  const perfil = document.getElementById('pantallaPerfil');
 
   setTimeout(() => {
     bienvenida.classList.add('hidden');
@@ -20,29 +20,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const dni = document.getElementById('dniInput').value.trim();
     const clave = document.getElementById('claveInput').value.trim();
 
+    if (!dni || !clave) {
+      alert('Por favor, completá DNI y clave.');
+      return;
+    }
+
     Papa.parse(accesoUrl, {
       download: true,
       header: true,
       complete: function(results) {
         atletas = results.data;
 
+        // Buscar atleta coincidente
         const atleta = atletas.find(a => a.DNI === dni && a.Clave === clave);
 
         if (atleta) {
+          // Mostrar perfil
           mostrarPerfil(atleta);
         } else {
           alert('❌ DNI o clave incorrectos');
         }
+      },
+      error: function() {
+        alert('Error al cargar los datos, intentá de nuevo.');
       }
     });
   });
+
+  function mostrarPerfil(atleta) {
+    gimnasio.classList.add('hidden');
+    perfil.classList.remove('hidden');
+
+    document.getElementById('nombreAtleta').textContent = atleta.Nombre || 'Atleta';
+    document.getElementById('fotoAtleta').src = atleta.Foto || 'https://via.placeholder.com/150?text=Sin+Foto';
+  }
+
+  // Hacemos visible la función mostrarPerfil fuera
+  window.mostrarPerfil = mostrarPerfil;
 });
-
-function mostrarPerfil(atleta) {
-  document.getElementById('pantallaGimnasio').classList.add('hidden');
-  const perfil = document.getElementById('pantallaPerfil');
-  perfil.classList.remove('hidden');
-
-  document.getElementById('nombreAtleta').textContent = atleta.Nombre || 'Atleta';
-  document.getElementById('fotoAtleta').src = atleta.Foto || 'https://via.placeholder.com/150';
-}
