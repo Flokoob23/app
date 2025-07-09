@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FLOKOOB – App de Entrenamiento</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
@@ -17,8 +17,15 @@
 
   <!-- Pantalla 2: Gimnasio -->
   <div id="pantallaGimnasio" class="pantalla pantalla-naranja hidden">
-    <h2 class="nombre-gimnasio">TROTADORES ELOY</h2>
-    <img src="https://i.imgur.com/YOUR_TEMP_LOGO.png" alt="Logo Trotadores" class="logo-gimnasio" />
+    <h2 class="nombre-gimnasio">
+      <svg class="icon-corredor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="32" cy="12" r="6" />
+        <path d="M24 22l10 10 6-6 6 18" />
+        <path d="M32 32l-12 20" />
+      </svg>
+      TROTADORES ELOY
+    </h2>
+
     <button id="btnIniciarSesion" class="btn">INICIAR SESIÓN</button>
 
     <div id="formLogin" class="login-form hidden">
