@@ -4,14 +4,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const bienvenida = document.getElementById('pantallaBienvenida');
   const gimnasio = document.getElementById('pantallaGimnasio');
   const perfil = document.getElementById('pantallaPerfil');
+  const btnIniciarSesion = document.getElementById('btnIniciarSesion');
+  const formLogin = document.getElementById('formLogin');
 
+  // Transición con fade suave de bienvenida a gimnasio
   setTimeout(() => {
-    bienvenida.classList.add('hidden');
-    gimnasio.classList.remove('hidden');
+    bienvenida.style.opacity = 0;
+    setTimeout(() => {
+      bienvenida.classList.add('hidden');
+      gimnasio.classList.remove('hidden');
+      gimnasio.style.opacity = 0;
+      setTimeout(() => {
+        gimnasio.style.opacity = 1;
+      }, 50);
+    }, 1200);
   }, 2500);
 
-  document.getElementById('btnIniciarSesion').addEventListener('click', () => {
-    document.getElementById('formLogin').classList.remove('hidden');
+  btnIniciarSesion.addEventListener('click', () => {
+    // Desaparece el boton y aparece el form
+    btnIniciarSesion.style.display = 'none';
+    formLogin.classList.remove('hidden');
   });
 
   document.getElementById('btnLogin').addEventListener('click', () => {
@@ -50,13 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function mostrarPerfil(atleta) {
-    const bienvenida = document.getElementById('pantallaBienvenida');
-    const gimnasio = document.getElementById('pantallaGimnasio');
-    const perfil = document.getElementById('pantallaPerfil');
-
     gimnasio.classList.add('hidden');
     bienvenida.classList.add('hidden');
     perfil.classList.remove('hidden');
+    perfil.style.opacity = 0;
+    setTimeout(() => {
+      perfil.style.opacity = 1;
+    }, 50);
 
     document.getElementById('nombreAtleta').textContent = atleta.Nombre;
     document.getElementById('fotoAtleta').src = atleta.Foto;
