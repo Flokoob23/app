@@ -31,38 +31,13 @@ body, html {
 }
 
 .bienvenida-contenedor h1 {
-  font-size: 3rem;
-  margin-bottom: 0.3rem;
-  font-weight: 900;
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
 }
 
-.bienvenida-contenedor h2 {
-  font-size: 1.2rem;
-  margin-top: 0;
-  font-weight: 500;
-  color: #FFD600;
-  user-select: none;
-}
-
-/* Logo tamaño igual */
 .logo-flokoob {
-  width: 100px;
+  width: 120px;
   filter: brightness(1) saturate(5);
-  margin-top: 0.8rem;
-}
-
-/* Responsive para móvil */
-@media (max-width: 480px) {
-  .bienvenida-contenedor h1 {
-    font-size: 2.4rem;
-  }
-  .bienvenida-contenedor h2 {
-    font-size: 1rem;
-  }
-  .logo-flokoob {
-    width: 80px;
-    margin-top: 0.6rem;
-  }
 }
 
 /* Pantalla 2 - Gimnasio */
@@ -219,4 +194,3 @@ body, html {
   background-color: #2a5390;
   outline: none;
 }
-
