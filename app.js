@@ -1,79 +1,90 @@
-const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
+const urlLogin = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
+const urlEntrenamientos = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const bienvenida = document.getElementById('pantallaBienvenida');
-  const gimnasio = document.getElementById('pantallaGimnasio');
-  const perfil = document.getElementById('pantallaPerfil');
-  const btnIniciarSesion = document.getElementById('btnIniciarSesion');
-  const formLogin = document.getElementById('formLogin');
+let usuarioActual = null;
 
-  // Transición con fade suave de bienvenida a gimnasio
+// Pantalla inicial
+window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
-    bienvenida.style.opacity = 0;
-    setTimeout(() => {
-      bienvenida.classList.add('hidden');
-      gimnasio.classList.remove('hidden');
-      gimnasio.style.opacity = 0;
-      setTimeout(() => {
-        gimnasio.style.opacity = 1;
-      }, 50);
-    }, 1200);
-  }, 2500);
+    document.getElementById('pantallaBienvenida').classList.add('hidden');
+    document.getElementById('pantallaGimnasio').classList.remove('hidden');
+  }, 2000);
 
-  btnIniciarSesion.addEventListener('click', () => {
-    // Desaparece el boton y aparece el form
-    btnIniciarSesion.style.display = 'none';
-    formLogin.classList.remove('hidden');
+  document.getElementById('btnIniciarSesion').addEventListener('click', () => {
+    document.getElementById('btnIniciarSesion').classList.add('hidden');
+    document.getElementById('formLogin').classList.remove('hidden');
   });
 
-  document.getElementById('btnLogin').addEventListener('click', () => {
-    const dni = document.getElementById('dniInput').value.trim();
-    const clave = document.getElementById('claveInput').value.trim();
-
-    if (!dni || !clave) {
-      alert('Por favor, completá DNI y clave.');
-      return;
-    }
-
-    Papa.parse(accesoUrl, {
-      download: true,
-      header: false,
-      complete: function(results) {
-        const data = results.data;
-
-        const atletaFila = data.find(row => row[0] === dni && row[1] === clave);
-
-        if (atletaFila) {
-          const atleta = {
-            DNI: atletaFila[0],
-            Clave: atletaFila[1],
-            Nombre: atletaFila[2] || 'Atleta',
-            Foto: atletaFila[3] || 'https://via.placeholder.com/150?text=Sin+Foto'
-          };
-          mostrarPerfil(atleta);
-        } else {
-          alert('❌ DNI o clave incorrectos');
-        }
-      },
-      error: function() {
-        alert('Error al cargar los datos, intentá de nuevo.');
-      }
-    });
-  });
-
-  function mostrarPerfil(atleta) {
-    gimnasio.classList.add('hidden');
-    bienvenida.classList.add('hidden');
-    perfil.classList.remove('hidden');
-    perfil.style.opacity = 0;
-    setTimeout(() => {
-      perfil.style.opacity = 1;
-    }, 50);
-
-    document.getElementById('nombreAtleta').textContent = atleta.Nombre;
-    document.getElementById('fotoAtleta').src = atleta.Foto;
-  }
-
-  window.mostrarPerfil = mostrarPerfil;
+  document.getElementById('btnLogin').addEventListener('click', iniciarSesion);
 });
 
+function iniciarSesion() {
+  const dni = document.getElementById('dniInput').value.trim();
+  const clave = document.getElementById('claveInput').value.trim();
+
+  Papa.parse(urlLogin, {
+    download: true,
+    header: true,
+    complete: function (results) {
+      const datos = results.data;
+      const usuario = datos.find(row => row.DNI === dni && row.CLAVE === clave);
+      if (usuario) {
+        usuarioActual = usuario;
+        mostrarPerfil(usuario);
+      } else {
+        alert('❌ DNI o clave incorrectos');
+      }
+    }
+  });
+}
+
+function mostrarPerfil(usuario) {
+  document.getElementById('pantallaGimnasio').classList.add('hidden');
+  document.getElementById('pantallaPerfil').classList.remove('hidden');
+  document.getElementById('nombreAtleta').textContent = usuario.NOMBRE;
+  document.getElementById('fotoAtleta').src = usuario.FOTO || 'https://via.placeholder.com/100';
+
+  const btnEntrenamientos = document.querySelector('.botones-perfil button:nth-child(1)');
+  btnEntrenamientos.addEventListener('click', mostrarEntrenamientos);
+}
+
+function mostrarEntrenamientos() {
+  if (!usuarioActual?.DNI) return alert("No se encontró DNI del atleta.");
+
+  Papa.parse(urlEntrenamientos, {
+    download: true,
+    header: true,
+    complete: function (results) {
+      const data = results.data;
+      const registros = data.filter(row => row.DNI === usuarioActual.DNI);
+
+      if (registros.length === 0) {
+        alert("No hay entrenamientos registrados para este atleta.");
+        return;
+      }
+
+      let contenido = '';
+      registros.forEach(reg => {
+        contenido += `<h3>📅 ${reg.FECHA}</h3><ul>`;
+        Object.keys(reg).forEach(k => {
+          if (k.startsWith("EJERCICIO") && reg[k]) {
+            const ejercicio = reg[k];
+            contenido += `<li><a href="https://www.google.com/search?q=ejercicio+${encodeURIComponent(ejercicio)}" target="_blank">${ejercicio}</a></li>`;
+          }
+        });
+        contenido += '</ul>';
+      });
+
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.innerHTML = `
+        <div class="modal-entrenamientos">
+          <h2>Entrenamientos de ${usuarioActual.NOMBRE}</h2>
+          ${contenido}
+          <button onclick="this.parentElement.parentElement.remove()">Cerrar</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+  });
+}
