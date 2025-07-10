@@ -3,43 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FLOKOOB – App de Entrenamiento</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>FLOKOOB - APP DE ENTRENAMIENTO</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 
-  <!-- Pantalla de Bienvenida -->
-  <section id="pantallaBienvenida" class="fade">
-    <h1 class="titulo-flokoob">FLOKOOB</h1>
-    <p class="subtitulo-flokoob">APP DE ENTRENAMIENTO</p>
-    <img src="https://i.imgur.com/QyPccnt.png" alt="Logo Flokoob" class="logo-pequeno" />
-  </section>
-
-  <!-- Pantalla Gimnasio -->
-  <section id="pantallaGimnasio" class="fade hidden">
-    <h2 class="nombre-gimnasio">🏃‍♂️ TROTADORES ELOY</h2>
-    <button id="btnIniciarSesion" class="btn">INICIAR SESIÓN</button>
-
-    <div id="formLogin" class="formulario hidden">
-      <input type="text" id="dniInput" placeholder="DNI" />
-      <input type="password" id="claveInput" placeholder="Clave" />
-      <button id="btnLogin" class="btn">Ingresar</button>
+  <!-- Pantalla 1: Bienvenida -->
+  <div id="pantallaBienvenida" class="pantalla">
+    <div class="bienvenida-contenedor">
+      <h1>FLOKOOB</h1>
+      <h2>APP DE ENTRENAMIENTO</h2>
+      <img src="https://i.imgur.com/QyPccnt.png" alt="Logo Flokoob" class="logo-flokoob" />
     </div>
-  </section>
+  </div>
 
-  <!-- Pantalla de Perfil -->
-  <section id="pantallaPerfil" class="fade hidden perfil">
-    <img id="fotoAtleta" class="foto-perfil" src="" alt="Foto" />
-    <h2 id="nombreAtleta"></h2>
-    <div class="botones-perfil">
-      <button class="btn">ENTRENAMIENTOS</button>
-      <button class="btn">REGISTROS</button>
-      <button class="btn">HISTORIAL EN CARRERAS</button>
-      <button class="btn">PAGO DE CUOTA</button>
+  <!-- Pantalla 2: Gimnasio -->
+  <div id="pantallaGimnasio" class="pantalla hidden">
+    <div class="gimnasio-contenedor">
+      <div class="gimnasio-titulo">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon-corredor" viewBox="0 0 64 64" fill="none" stroke="black" stroke-width="3">
+          <circle cx="32" cy="12" r="8" />
+          <path d="M20 38l12-10 10 20-6 14" />
+          <path d="M44 52l8-12" />
+        </svg>
+        <h2>TROTADORES ELOY</h2>
+      </div>
+      <button id="btnIniciarSesion" class="btn-iniciar">INICIAR SESIÓN</button>
+
+      <form id="formLogin" class="form-login hidden" onsubmit="return false;">
+        <input type="text" id="dniInput" placeholder="DNI" autocomplete="off" />
+        <input type="password" id="claveInput" placeholder="Clave" autocomplete="off" />
+        <button id="btnLogin" type="button">Ingresar</button>
+      </form>
     </div>
-  </section>
+  </div>
+
+  <!-- Pantalla 3: Perfil del Atleta -->
+  <div id="pantallaPerfil" class="pantalla hidden">
+    <div class="perfil-contenedor">
+      <img id="fotoAtleta" class="foto-perfil" src="" alt="Foto del Atleta" />
+      <div class="info-atleta">
+        <h2 id="nombreAtleta"></h2>
+        <div class="botones-perfil">
+          <button>ENTRENAMIENTOS</button>
+          <button>REGISTROS</button>
+          <button>HISTORIAL EN CARRERAS</button>
+          <button>PAGO DE CUOTA</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
