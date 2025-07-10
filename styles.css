@@ -17,7 +17,7 @@ body, html {
   justify-content: center;
   align-items: center;
   opacity: 1;
-  transition: opacity 1.2s ease; /* transición para fade */
+  transition: opacity 1.2s ease;
 }
 
 .hidden {
@@ -31,8 +31,18 @@ body, html {
 }
 
 .bienvenida-contenedor h1 {
-  font-size: 2.8rem;
-  margin-bottom: 1rem;
+  font-size: 3.2rem;
+  margin: 0;
+  line-height: 1;
+}
+
+.subtitulo-flokoob {
+  font-size: 1rem;
+  color: #FFD600;
+  margin-top: 0.3rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
+  font-weight: 400;
 }
 
 .logo-flokoob {
@@ -194,3 +204,4 @@ body, html {
   background-color: #2a5390;
   outline: none;
 }
+
