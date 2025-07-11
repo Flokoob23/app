@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnIniciarSesion = document.getElementById('btnIniciarSesion');
   const formLogin = document.getElementById('formLogin');
   const btnLogin = document.getElementById('btnLogin');
-  const btnEntrenamientos = document.getElementById('btnEntrenamientos');
-  const modalEntrenamientos = document.getElementById('modalEntrenamientos');
-  const listaEntrenamientos = document.getElementById('listaEntrenamientos');
-  const btnCerrarModal = document.getElementById('btnCerrarModal');
 
-  // Transición con fade suave de bienvenida a gimnasio
+  const btnIrEntrenamientos = document.getElementById('btnIrEntrenamientos');
+  const pantallaEntrenamientos = document.getElementById('pantallaEntrenamientos');
+  const contenedorEntrenamientos = document.getElementById('contenedorEntrenamientos');
+  const btnVolverPerfil = document.getElementById('btnVolverPerfil');
+
   setTimeout(() => {
     bienvenida.style.opacity = 0;
     setTimeout(() => {
@@ -77,66 +77,65 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('nombreAtleta').textContent = atleta.Nombre;
     document.getElementById('fotoAtleta').src = atleta.Foto;
 
-    perfil.setAttribute('data-dni', atleta.DNI); // guardo DNI para buscar entrenamientos
+    perfil.setAttribute('data-dni', atleta.DNI);
   }
 
-  btnEntrenamientos.addEventListener('click', () => {
+  btnIrEntrenamientos.addEventListener('click', () => {
     const dni = perfil.getAttribute('data-dni');
     if (!dni) {
       alert('No se encontró DNI del atleta.');
       return;
     }
 
-    // Limpiar lista antes de cargar
-    listaEntrenamientos.innerHTML = '<li>Cargando entrenamientos...</li>';
-    modalEntrenamientos.classList.remove('hidden');
+    perfil.classList.add('hidden');
+    pantallaEntrenamientos.classList.remove('hidden');
+    pantallaEntrenamientos.style.opacity = 0;
+    setTimeout(() => pantallaEntrenamientos.style.opacity = 1, 50);
+
+    contenedorEntrenamientos.innerHTML = 'Cargando entrenamientos...';
 
     Papa.parse(entrenamientosUrl, {
       download: true,
       header: false,
       complete: function(results) {
         const data = results.data;
-        // Filtrar filas con DNI igual al del atleta
-        const entrenosAtleta = data.filter(row => row[0] === dni);
+        const fila = data.find(row => row[0] === dni);
 
-        if (entrenosAtleta.length === 0) {
-          listaEntrenamientos.innerHTML = '<li>No se encontraron entrenamientos.</li>';
+        if (!fila) {
+          contenedorEntrenamientos.innerHTML = '<p>No se encontraron entrenamientos.</p>';
           return;
         }
 
-        // Vaciar lista para mostrar
-        listaEntrenamientos.innerHTML = '';
+        const fecha = fila[1];
+        const ejercicios = fila.slice(2).filter(e => e && e.trim() !== '');
 
-        entrenosAtleta.forEach(fila => {
-          // fila ejemplo: [DNI, FECHA, EJERCICIO1, EJERCICIO2, ...]
-          const fecha = fila[1];
-          const ejercicios = fila.slice(2).filter(e => e && e.trim() !== '');
+        let html = `<p><strong>Fecha:</strong> ${fecha}</p>`;
+        html += '<ul style="list-style: none; padding: 0;">';
 
-          const liFecha = document.createElement('li');
-          liFecha.style.fontWeight = '700';
-          liFecha.textContent = `Fecha: ${fecha}`;
-          listaEntrenamientos.appendChild(liFecha);
-
-          ejercicios.forEach(ejercicio => {
-            const liEj = document.createElement('li');
-            const enlace = document.createElement('a');
-            enlace.href = `https://www.google.com/search?q=${encodeURIComponent(ejercicio)}`;
-            enlace.target = '_blank';
-            enlace.rel = 'noopener noreferrer';
-            enlace.textContent = ejercicio;
-            liEj.appendChild(enlace);
-            listaEntrenamientos.appendChild(liEj);
-          });
+        ejercicios.forEach(ejercicio => {
+          const encoded = encodeURIComponent(ejercicio);
+          html += `
+            <li style="margin-bottom: 1rem;">
+              <span>${ejercicio}</span>
+              <a href="https://www.google.com/search?q=${encoded}" target="_blank" title="Buscar en Google" style="margin-left: 10px;">
+                🔍
+              </a>
+            </li>
+          `;
         });
+
+        html += '</ul>';
+        contenedorEntrenamientos.innerHTML = html;
       },
       error: function() {
-        listaEntrenamientos.innerHTML = '<li>Error al cargar los entrenamientos.</li>';
+        contenedorEntrenamientos.innerHTML = '<p>Error al cargar entrenamientos.</p>';
       }
     });
   });
 
-  btnCerrarModal.addEventListener('click', () => {
-    modalEntrenamientos.classList.add('hidden');
+  btnVolverPerfil.addEventListener('click', () => {
+    pantallaEntrenamientos.classList.add('hidden');
+    perfil.classList.remove('hidden');
   });
 
 });
