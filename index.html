@@ -47,7 +47,7 @@
       <div class="info-atleta">
         <h2 id="nombreAtleta"></h2>
         <div class="botones-perfil">
-          <button>ENTRENAMIENTOS</button>
+          <button id="btnIrEntrenamientos">ENTRENAMIENTOS</button>
           <button>REGISTROS</button>
           <button>HISTORIAL EN CARRERAS</button>
           <button>PAGO DE CUOTA</button>
@@ -56,7 +56,15 @@
     </div>
   </div>
 
+  <!-- Pantalla 4: Entrenamientos -->
+  <div id="pantallaEntrenamientos" class="pantalla hidden">
+    <div class="gimnasio-contenedor">
+      <h2>Mis Entrenamientos</h2>
+      <div id="contenedorEntrenamientos" style="text-align: left; margin-top: 1rem;"></div>
+      <button id="btnVolverPerfil" class="btn-iniciar" style="margin-top: 2rem;">Volver al perfil</button>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
-
