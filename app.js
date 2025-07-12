@@ -1,73 +1,32 @@
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
-const historialPostUrl = 'https://script.google.com/macros/s/AKfycbyYWNG8i6GRDm4q0ycLyM2fqv-teSlcXHMPWvL-xsB-A-sh-I0vGbDDEmlodKMmYAV4/exec';
+const historialPostUrl = 'https://script.google.com/macros/s/AKfycbxl2CZXJHEUtsoyzzXHTCq2cXtCEaiMzH5wPuKPmlEbNGTcN3TCGhTRjDThEQyxI7M2/exec';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
-const bienvenida = document.getElementById('pantallaBienvenida');
-const gimnasio = document.getElementById('pantallaGimnasio');
-const perfil = document.getElementById('pantallaPerfil');
-const btnIniciarSesion = document.getElementById('btnIniciarSesion');
-const formLogin = document.getElementById('formLogin');
-const btnLogin = document.getElementById('btnLogin');
-const btnEntrenamientos = document.getElementById('btnEntrenamientos');
-const pantallaEntrenamientos = document.getElementById('modalEntrenamientos');
-const contenedorEntrenamientos = document.getElementById('listaEntrenamientos');
-const btnCerrarModal = document.getElementById('btnCerrarModal');
-
-const btnHistorial = document.getElementById('btnHistorial');
-const pantallaHistorial = document.getElementById('pantallaHistorial');
-const btnVolverPerfil2 = document.getElementById('btnVolverPerfil2');
-const formCarrera = document.getElementById('formCarrera');
-const tablaCarreras = document.getElementById('tablaCarreras');
-
-function convertirTiempoAMinutos(tiempoStr) {
-  const partes = tiempoStr.trim().split(':').map(p => parseInt(p, 10));
-  while (partes.length < 3) partes.unshift(0);
-  const [horas, minutos, segundos] = partes;
-  return horas * 60 + minutos + segundos / 60;
-}
-
-function normalizarTiempo(tiempoStr) {
-  const partes = tiempoStr.trim().split(':');
-  while (partes.length < 3) partes.unshift('00');
-  return partes.map(p => p.padStart(2, '0')).join(':');
-}
-
-// Formato de input tiempo: muestra 00:00:00 y permite escribir sin borrar ":"
-function formatearInputTiempo(e) {
-  const input = e.target;
-  let val = input.value;
-
-  // Quitar todo lo que no sea número o ":"
-  val = val.replace(/[^\d:]/g, '');
-
-  // Limitar longitud a 8 caracteres (hh:mm:ss)
-  if (val.length > 8) val = val.slice(0, 8);
-
-  // Agregar ":" en las posiciones correctas si el usuario no los escribió
-  if (val.length > 2 && val[2] !== ':') {
-    val = val.slice(0, 2) + ':' + val.slice(2);
-  }
-  if (val.length > 5 && val[5] !== ':') {
-    val = val.slice(0, 5) + ':' + val.slice(5);
-  }
-
-  // Completar con 00 si es más corto
-  const partes = val.split(':');
-  while (partes.length < 3) partes.push('00');
-
-  input.value = partes.map(p => p.padStart(2, '0')).join(':').slice(0, 8);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
+  const bienvenida = document.getElementById('pantallaBienvenida');
+  const gimnasio = document.getElementById('pantallaGimnasio');
+  const perfil = document.getElementById('pantallaPerfil');
+  const btnIniciarSesion = document.getElementById('btnIniciarSesion');
+  const formLogin = document.getElementById('formLogin');
+  const btnLogin = document.getElementById('btnLogin');
+  const btnIrEntrenamientos = document.getElementById('btnEntrenamientos');
+  const pantallaEntrenamientos = document.getElementById('modalEntrenamientos');
+  const contenedorEntrenamientos = document.getElementById('listaEntrenamientos');
+  const btnVolverPerfil = document.getElementById('btnCerrarModal');
+
+  const btnHistorial = document.getElementById('btnHistorial');
+  const pantallaHistorial = document.getElementById('pantallaHistorial');
+  const btnVolverPerfil2 = document.getElementById('btnVolverPerfil2');
+  const formCarrera = document.getElementById('formCarrera');
+  const tablaCarreras = document.getElementById('tablaCarreras');
+  const tiempoInput = document.getElementById('tiempoInput');
+
+  // Degradado inicial
   setTimeout(() => {
     bienvenida.style.transition = 'opacity 1.2s ease';
     bienvenida.style.opacity = 0;
-
-    // Cambiamos fondo body a naranja en el mismo momento que se desvanece bienvenida
-    document.body.style.backgroundColor = '#FFA500';
-
     setTimeout(() => {
       bienvenida.classList.add('hidden');
       gimnasio.classList.remove('hidden');
@@ -79,11 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1200);
   }, 2500);
 
+  // Mostrar formulario login
   btnIniciarSesion.addEventListener('click', () => {
     btnIniciarSesion.style.display = 'none';
     formLogin.classList.remove('hidden');
   });
 
+  // Login y mostrar perfil
   btnLogin.addEventListener('click', () => {
     const dni = document.getElementById('dniInput').value.trim();
     const clave = document.getElementById('claveInput').value.trim();
@@ -118,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Función mostrar perfil
   function mostrarPerfil(atleta) {
     gimnasio.classList.add('hidden');
     bienvenida.classList.add('hidden');
@@ -133,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.setAttribute('data-dni', atleta.DNI);
   }
 
-  btnEntrenamientos.addEventListener('click', () => {
+  // Mostrar entrenamientos
+  btnIrEntrenamientos.addEventListener('click', () => {
     const dni = perfil.getAttribute('data-dni');
     if (!dni) {
       alert('No se encontró DNI del atleta.');
@@ -143,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.classList.add('hidden');
     pantallaEntrenamientos.classList.remove('hidden');
     pantallaEntrenamientos.style.opacity = 0;
-    pantallaEntrenamientos.style.transition = 'opacity 1.2s ease';
     setTimeout(() => pantallaEntrenamientos.style.opacity = 1, 50);
 
     contenedorEntrenamientos.innerHTML = 'Cargando entrenamientos...';
@@ -171,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
           html += `
             <li style="margin-bottom: 1rem;">
               <span>${ejercicio}</span>
-              <a href="https://www.google.com/search?q=${encoded}" target="_blank" title="Buscar en Google" style="margin-left: 10px; cursor: pointer;">
+              <a href="https://www.google.com/search?q=${encoded}" target="_blank" title="Buscar en Google" style="margin-left: 10px;">
                 🔍
               </a>
             </li>
@@ -187,19 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  btnCerrarModal.addEventListener('click', () => {
+  btnVolverPerfil.addEventListener('click', () => {
     pantallaEntrenamientos.classList.add('hidden');
     perfil.classList.remove('hidden');
   });
 
-  // HISTORIAL DE CARRERAS Y FORMULARIO
-
+  // Mostrar historial en carreras
   btnHistorial.addEventListener('click', () => {
     perfil.classList.add('hidden');
     pantallaHistorial.classList.remove('hidden');
-    pantallaHistorial.style.opacity = 0;
-    pantallaHistorial.style.transition = 'opacity 1.2s ease';
-    setTimeout(() => pantallaHistorial.style.opacity = 1, 50);
   });
 
   btnVolverPerfil2.addEventListener('click', () => {
@@ -207,11 +165,37 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.classList.remove('hidden');
   });
 
-  // Input para tiempo: formatear al escribir
-  const tiempoInput = document.getElementById('tiempoInput');
-  tiempoInput.addEventListener('input', formatearInputTiempo);
-  tiempoInput.value = '00:00:00';
+  // Funciones para manejar tiempo
+  function normalizarTiempo(tiempoStr) {
+    const partes = tiempoStr.split(':');
+    while (partes.length < 3) partes.unshift('00');
+    return partes.map(p => p.padStart(2, '0')).join(':');
+  }
 
+  function convertirTiempoAMinutos(tiempoStr) {
+    const partes = tiempoStr.split(':').map(p => parseInt(p, 10));
+    while (partes.length < 3) partes.unshift(0);
+    const [horas, minutos, segundos] = partes;
+    return horas * 60 + minutos + segundos / 60;
+  }
+
+  // Formateo del input tiempo mientras se escribe
+  tiempoInput.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/[^0-9]/g, '');
+    if (val.length > 6) val = val.slice(0, 6);
+
+    if (val.length <= 2) {
+      val = val;
+    } else if (val.length <= 4) {
+      val = val.slice(0, val.length - 2) + ':' + val.slice(val.length - 2);
+    } else {
+      val = val.slice(0, 2) + ':' + val.slice(2, 4) + ':' + val.slice(4);
+    }
+
+    e.target.value = val;
+  });
+
+  // Manejar envío de nueva carrera
   formCarrera.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -219,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const distancia = parseFloat(document.getElementById('distanciaInput').value);
     const tiempoInputVal = document.getElementById('tiempoInput').value.trim();
     const tiempoNormalizado = normalizarTiempo(tiempoInputVal);
-    const tiempo = convertirTiempoAMinutos(tiempoNormalizado);
-    const ritmo = (tiempo / distancia).toFixed(2);
+    const tiempoEnMinutos = convertirTiempoAMinutos(tiempoNormalizado);
+    const ritmo = (tiempoEnMinutos / distancia).toFixed(2);
     const dni = perfil.getAttribute('data-dni');
 
     if (!evento || !distancia || !tiempoInputVal) {
@@ -234,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dni,
         evento,
         distancia,
-        tiempo: tiempoNormalizado,
+        tiempo: tiempoNormalizado,  // enviamos texto hh:mm:ss
         ritmo
       }),
       headers: {
@@ -249,11 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <p>✅ ${evento} - ${distancia}km - ${tiempoNormalizado} - Ritmo: ${ritmo} min/km</p>
         `;
         formCarrera.reset();
-        tiempoInput.value = '00:00:00';
       } else {
         alert('❌ ' + data.message);
       }
     })
     .catch(() => alert('❌ Error de conexión'));
   });
+
 });
