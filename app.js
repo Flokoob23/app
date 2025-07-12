@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 50);
     }, 1200);
   }, 2500);
+});
+
 
   btnIniciarSesion.addEventListener('click', () => {
     btnIniciarSesion.style.display = 'none';
