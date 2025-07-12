@@ -1,6 +1,6 @@
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
-const historialPostUrl = 'https://script.google.com/macros/s/AKfycbxl2CZXJHEUtsoyzzXHTCq2cXtCEaiMzH5wPuKPmlEbNGTcN3TCGhTRjDThEQyxI7M2/exec';
+const historialPostUrl = 'https://script.google.com/macros/s/AKfycbwnRy8RveNbpk67b7JMtrjJYenxCurvT4UpMpwBGLp2mv3h7owsDImiu2S3w0xqJ1sB/exec';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
