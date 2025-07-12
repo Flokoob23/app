@@ -1,17 +1,16 @@
-// app.js con historial de carreras y sonido integrado
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
 const historialPostUrl = 'https://script.google.com/macros/s/AKfycbzN5m29Vy5yFYEe_HjWcJlLq-xY0Vh8jMyuq7T4xMUFX75ejNPe13V6olm0hXoCh9Wi/exec';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
-// Elementos del DOM
 const bienvenida = document.getElementById('pantallaBienvenida');
 const gimnasio = document.getElementById('pantallaGimnasio');
 const perfil = document.getElementById('pantallaPerfil');
 const btnIniciarSesion = document.getElementById('btnIniciarSesion');
 const formLogin = document.getElementById('formLogin');
 const btnLogin = document.getElementById('btnLogin');
+
 const btnEntrenamientos = document.getElementById('btnEntrenamientos');
 const modalEntrenamientos = document.getElementById('modalEntrenamientos');
 const listaEntrenamientos = document.getElementById('listaEntrenamientos');
@@ -24,6 +23,7 @@ const formCarrera = document.getElementById('formCarrera');
 const tablaCarreras = document.getElementById('tablaCarreras');
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Transición bienvenida -> gimnasio
   setTimeout(() => {
     bienvenida.style.opacity = 0;
     setTimeout(() => {
@@ -36,11 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1200);
   }, 2500);
 
+  // Mostrar login
   btnIniciarSesion.addEventListener('click', () => {
     btnIniciarSesion.style.display = 'none';
     formLogin.classList.remove('hidden');
   });
 
+  // Login y carga perfil
   btnLogin.addEventListener('click', () => {
     const dni = document.getElementById('dniInput').value.trim();
     const clave = document.getElementById('claveInput').value.trim();
@@ -90,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.setAttribute('data-dni', atleta.DNI);
   }
 
-  // Mostrar modal entrenamientos
+  // ABRIR MODAL ENTRENAMIENTOS
   btnEntrenamientos.addEventListener('click', () => {
     const dni = perfil.getAttribute('data-dni');
     if (!dni) {
@@ -143,18 +145,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Cerrar modal entrenamientos y volver a perfil
   btnCerrarModal.addEventListener('click', () => {
     modalEntrenamientos.classList.add('hidden');
     perfil.classList.remove('hidden');
   });
 
-  // Función completar entrenamiento
+  // Función global para marcar entrenamiento completado
   window.marcarCompletado = function(ejercicio) {
     alert(`✔ Entrenamiento marcado como completado: ${ejercicio}`);
     sonidoConfirmacion.play();
   };
 
-  // HISTORIAL EN CARRERAS
+  // ABRIR PANTALLA HISTORIAL EN CARRERAS
   btnHistorial.addEventListener('click', () => {
     perfil.classList.add('hidden');
     pantallaHistorial.classList.remove('hidden');
@@ -163,11 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarHistorial();
   });
 
+  // Volver de historial a perfil
   btnVolverPerfil2.addEventListener('click', () => {
     pantallaHistorial.classList.add('hidden');
     perfil.classList.remove('hidden');
   });
 
+  // FORMULARIO REGISTRAR CARRERA
   formCarrera.addEventListener('submit', async (e) => {
     e.preventDefault();
     const evento = document.getElementById('eventoInput').value.trim();
@@ -202,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Carga historial de carreras para el atleta y muestra tabla
   function cargarHistorial() {
     const dni = perfil.getAttribute('data-dni');
     tablaCarreras.innerHTML = '📊 Cargando historial...';
@@ -228,3 +234,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
