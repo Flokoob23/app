@@ -12,10 +12,10 @@ const perfil = document.getElementById('pantallaPerfil');
 const btnIniciarSesion = document.getElementById('btnIniciarSesion');
 const formLogin = document.getElementById('formLogin');
 const btnLogin = document.getElementById('btnLogin');
-const btnIrEntrenamientos = document.getElementById('btnIrEntrenamientos');
-const pantallaEntrenamientos = document.getElementById('pantallaEntrenamientos');
-const contenedorEntrenamientos = document.getElementById('contenedorEntrenamientos');
-const btnVolverPerfil = document.getElementById('btnVolverPerfil');
+const btnEntrenamientos = document.getElementById('btnEntrenamientos');
+const modalEntrenamientos = document.getElementById('modalEntrenamientos');
+const listaEntrenamientos = document.getElementById('listaEntrenamientos');
+const btnCerrarModal = document.getElementById('btnCerrarModal');
 
 const btnHistorial = document.getElementById('btnHistorial');
 const pantallaHistorial = document.getElementById('pantallaHistorial');
@@ -90,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.setAttribute('data-dni', atleta.DNI);
   }
 
-  btnIrEntrenamientos.addEventListener('click', () => {
+  // Mostrar modal entrenamientos
+  btnEntrenamientos.addEventListener('click', () => {
     const dni = perfil.getAttribute('data-dni');
     if (!dni) {
       alert('No se encontró DNI del atleta.');
@@ -98,11 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     perfil.classList.add('hidden');
-    pantallaEntrenamientos.classList.remove('hidden');
-    pantallaEntrenamientos.style.opacity = 0;
-    setTimeout(() => pantallaEntrenamientos.style.opacity = 1, 50);
+    modalEntrenamientos.classList.remove('hidden');
+    modalEntrenamientos.style.opacity = 0;
+    setTimeout(() => modalEntrenamientos.style.opacity = 1, 50);
 
-    contenedorEntrenamientos.innerHTML = 'Cargando entrenamientos...';
+    listaEntrenamientos.innerHTML = 'Cargando entrenamientos...';
 
     Papa.parse(entrenamientosUrl, {
       download: true,
@@ -112,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fila = data.find(row => row[0] === dni);
 
         if (!fila) {
-          contenedorEntrenamientos.innerHTML = '<p>No se encontraron entrenamientos.</p>';
+          listaEntrenamientos.innerHTML = '<p>No se encontraron entrenamientos.</p>';
           return;
         }
 
@@ -134,20 +135,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         html += '</ul>';
-        contenedorEntrenamientos.innerHTML = html;
+        listaEntrenamientos.innerHTML = html;
       },
       error: function() {
-        contenedorEntrenamientos.innerHTML = '<p>Error al cargar entrenamientos.</p>';
+        listaEntrenamientos.innerHTML = '<p>Error al cargar entrenamientos.</p>';
       }
     });
   });
 
-  btnVolverPerfil.addEventListener('click', () => {
-    pantallaEntrenamientos.classList.add('hidden');
+  btnCerrarModal.addEventListener('click', () => {
+    modalEntrenamientos.classList.add('hidden');
     perfil.classList.remove('hidden');
   });
 
-  // ✅ Función completar entrenamiento
+  // Función completar entrenamiento
   window.marcarCompletado = function(ejercicio) {
     alert(`✔ Entrenamiento marcado como completado: ${ejercicio}`);
     sonidoConfirmacion.play();
@@ -227,4 +228,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
