@@ -14,7 +14,7 @@
   <div id="pantallaBienvenida" class="pantalla">
     <div class="bienvenida-contenedor">
       <h1>FLOKOOB</h1>
-      <p class="subtitulo-flokoob">APP DE ENTRENAMIENTO</p>
+      <p class="subtitulo-flokoob">🏃‍♂️ APP DE ENTRENAMIENTO</p>
       <img src="https://i.imgur.com/QyPccnt.png" alt="Logo Flokoob" class="logo-flokoob" />
     </div>
   </div>
@@ -30,38 +30,53 @@
         </svg>
         <h2>TROTADORES ELOY</h2>
       </div>
-      <button id="btnIniciarSesion" class="btn-iniciar">INICIAR SESIÓN</button>
+      <button id="btnIniciarSesion" class="btn-iniciar">🔓 INICIAR SESIÓN</button>
 
       <form id="formLogin" class="form-login hidden" onsubmit="return false;">
-        <input type="text" id="dniInput" placeholder="DNI" autocomplete="off" />
-        <input type="password" id="claveInput" placeholder="Clave" autocomplete="off" />
+        <input type="text" id="dniInput" placeholder="🪪 DNI" autocomplete="off" />
+        <input type="password" id="claveInput" placeholder="🔑 Clave" autocomplete="off" />
         <button id="btnLogin" type="button">Ingresar</button>
       </form>
     </div>
   </div>
 
   <!-- Pantalla 3: Perfil del Atleta -->
- <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden">
+  <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden">
     <div class="perfil-contenedor">
       <img id="fotoAtleta" class="foto-perfil" src="" alt="Foto del Atleta" />
       <div class="info-atleta">
         <h2 id="nombreAtleta"></h2>
         <div class="botones-perfil">
-          <button id="btnIrEntrenamientos">ENTRENAMIENTOS</button>
-          <button>REGISTROS</button>
-          <button>HISTORIAL EN CARRERAS</button>
-          <button>PAGO DE CUOTA</button>
+          <button id="btnEntrenamientos">📋 ENTRENAMIENTOS</button>
+          <button>📝 REGISTROS</button>
+          <button id="btnHistorial">🏁 HISTORIAL EN CARRERAS</button>
+          <button>💳 PAGO DE CUOTA</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Pantalla 4: Entrenamientos -->
-  <div id="pantallaEntrenamientos" class="pantalla hidden">
+  <div id="modalEntrenamientos" class="pantalla hidden">
     <div class="gimnasio-contenedor">
-      <h2>Mis Entrenamientos</h2>
-      <div id="contenedorEntrenamientos" style="text-align: left; margin-top: 1rem;"></div>
-      <button id="btnVolverPerfil" class="btn-iniciar" style="margin-top: 2rem;">Volver al perfil</button>
+      <h2>📋 Entrenamientos</h2>
+      <ul id="listaEntrenamientos"></ul>
+      <button id="btnCerrarModal" class="btn-iniciar">🔙 Volver al perfil</button>
+    </div>
+  </div>
+
+  <!-- Pantalla 5: Historial Carreras -->
+  <div id="pantallaHistorial" class="pantalla hidden">
+    <div class="gimnasio-contenedor">
+      <h2>🏁 Historial en Carreras</h2>
+      <form id="formCarrera" class="form-login" onsubmit="return false;">
+        <input type="text" id="eventoInput" placeholder="🏟️ Nombre del evento" />
+        <input type="number" step="0.1" id="distanciaInput" placeholder="📏 Distancia en km" />
+        <input type="number" step="0.1" id="tiempoInput" placeholder="⏱️ Tiempo en minutos" />
+        <button id="btnAgregarCarrera">✅ Registrar Carrera</button>
+      </form>
+      <div id="tablaCarreras"></div>
+      <button id="btnVolverPerfil2" class="btn-iniciar">🔙 Volver al perfil</button>
     </div>
   </div>
 
