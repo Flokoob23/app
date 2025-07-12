@@ -61,10 +61,13 @@ function formatearInputTiempo(e) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Degradé inicial
   setTimeout(() => {
     bienvenida.style.transition = 'opacity 1.2s ease';
     bienvenida.style.opacity = 0;
+
+    // Cambiamos fondo body a naranja en el mismo momento que se desvanece bienvenida
+    document.body.style.backgroundColor = '#FFA500';
+
     setTimeout(() => {
       bienvenida.classList.add('hidden');
       gimnasio.classList.remove('hidden');
