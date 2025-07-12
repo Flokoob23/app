@@ -205,7 +205,7 @@ body, html {
   outline: none;
 }
 
-/* Entrenamientos */
+/* Entrenamientos & historial */
 #gimnasio-contenedor ul {
   list-style: none;
   padding: 0;
@@ -215,21 +215,9 @@ body, html {
   margin-bottom: 1rem;
 }
 
-/* Tabla de carreras */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  color: black;
+/* Tabla carreras */
+#tablaCarreras p {
+  margin: 0.4rem 0;
+  font-weight: 600;
 }
 
-table th, table td {
-  border: 1px solid #ddd;
-  padding: 0.6rem;
-  text-align: center;
-}
-
-table th {
-  background-color: #FFA500;
-  color: black;
-}
