@@ -24,9 +24,15 @@ const tablaCarreras = document.getElementById('tablaCarreras');
 
 function convertirTiempoAMinutos(tiempoStr) {
   const partes = tiempoStr.trim().split(':').map(p => parseInt(p, 10));
-  while (partes.length < 3) partes.unshift(0); // Agrega ceros al principio
+  while (partes.length < 3) partes.unshift(0);
   const [horas, minutos, segundos] = partes;
   return horas * 60 + minutos + segundos / 60;
+}
+
+function normalizarTiempo(tiempoStr) {
+  const partes = tiempoStr.trim().split(':');
+  while (partes.length < 3) partes.unshift('00');
+  return partes.map(p => p.padStart(2, '0')).join(':');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -98,74 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.setAttribute('data-dni', atleta.DNI);
   }
 
-  btnIrEntrenamientos.addEventListener('click', () => {
-    const dni = perfil.getAttribute('data-dni');
-    if (!dni) {
-      alert('No se encontró DNI del atleta.');
-      return;
-    }
-
-    perfil.classList.add('hidden');
-    pantallaEntrenamientos.classList.remove('hidden');
-    pantallaEntrenamientos.style.opacity = 0;
-    setTimeout(() => pantallaEntrenamientos.style.opacity = 1, 50);
-
-    contenedorEntrenamientos.innerHTML = 'Cargando entrenamientos...';
-
-    Papa.parse(entrenamientosUrl, {
-      download: true,
-      header: false,
-      complete: function(results) {
-        const data = results.data;
-        const fila = data.find(row => row[0] === dni);
-
-        if (!fila) {
-          contenedorEntrenamientos.innerHTML = '<p>No se encontraron entrenamientos.</p>';
-          return;
-        }
-
-        const fecha = fila[1];
-        const ejercicios = fila.slice(2).filter(e => e && e.trim() !== '');
-
-        let html = `<p><strong>Fecha:</strong> ${fecha}</p>`;
-        html += '<ul style="list-style: none; padding: 0;">';
-
-        ejercicios.forEach(ejercicio => {
-          const encoded = encodeURIComponent(ejercicio);
-          html += `
-            <li style="margin-bottom: 1rem;">
-              <span>${ejercicio}</span>
-              <a href="https://www.google.com/search?q=${encoded}" target="_blank" title="Buscar en Google" style="margin-left: 10px;">🔍</a>
-              <button onclick="marcarCompletado('${ejercicio}')">✅</button>
-            </li>
-          `;
-        });
-
-        html += '</ul>';
-        contenedorEntrenamientos.innerHTML = html;
-      },
-      error: function() {
-        contenedorEntrenamientos.innerHTML = '<p>Error al cargar entrenamientos.</p>';
-      }
-    });
-  });
-
-  btnVolverPerfil.addEventListener('click', () => {
-    pantallaEntrenamientos.classList.add('hidden');
-    perfil.classList.remove('hidden');
-  });
-
-  window.marcarCompletado = function(ejercicio) {
-    alert(`✔ Entrenamiento marcado como completado: ${ejercicio}`);
-    sonidoConfirmacion.play();
-  };
-
   btnHistorial.addEventListener('click', () => {
     perfil.classList.add('hidden');
     pantallaHistorial.classList.remove('hidden');
-    pantallaHistorial.style.opacity = 0;
-    setTimeout(() => pantallaHistorial.style.opacity = 1, 50);
-    cargarHistorial();
   });
 
   btnVolverPerfil2.addEventListener('click', () => {
@@ -173,67 +114,46 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.classList.remove('hidden');
   });
 
-  formCarrera.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  formCarrera.addEventListener('submit', () => {
     const evento = document.getElementById('eventoInput').value.trim();
     const distancia = parseFloat(document.getElementById('distanciaInput').value);
-    const tiempoTexto = document.getElementById('tiempoInput').value.trim();
-    const tiempoMinutos = convertirTiempoAMinutos(tiempoTexto);
+    const tiempoInput = document.getElementById('tiempoInput').value.trim();
+    const tiempo = convertirTiempoAMinutos(tiempoInput);
+    const tiempoNormalizado = normalizarTiempo(tiempoInput);
+    const ritmo = (tiempo / distancia).toFixed(2);
     const dni = perfil.getAttribute('data-dni');
 
-    if (!evento || isNaN(distancia) || isNaN(tiempoMinutos)) {
-      alert('Completá todos los campos correctamente.');
+    if (!evento || !distancia || !tiempo) {
+      alert('Por favor completá todos los campos');
       return;
     }
 
-    const ritmo = (tiempoMinutos / distancia).toFixed(2);
-
-    try {
-      const response = await fetch(historialPostUrl, {
-        method: 'POST',
-        body: JSON.stringify({ dni, evento, distancia, tiempo: tiempoMinutos, ritmo }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      const result = await response.json();
-
-      if (result.status === 'ok') {
+    fetch(historialPostUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        dni,
+        evento,
+        distancia,
+        tiempo: tiempoNormalizado,
+        ritmo
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'ok') {
         sonidoConfirmacion.play();
-        alert(`✅ Carrera guardada: ${evento}\n🏃‍♂️ Distancia: ${distancia} km\n⏱️ Tiempo: ${tiempoTexto}\n⚡ Ritmo: ${ritmo} min/km`);
+        tablaCarreras.innerHTML += `
+          <p>✅ ${evento} - ${distancia}km - ${tiempoNormalizado} - Ritmo: ${ritmo} min/km</p>
+        `;
         formCarrera.reset();
-        cargarHistorial();
       } else {
-        alert('❌ Error: ' + result.message);
+        alert('❌ ' + data.message);
       }
-    } catch (error) {
-      alert('❌ Error de conexión.');
-    }
+    })
+    .catch(() => alert('❌ Error de conexión'));
   });
-
-  function cargarHistorial() {
-    const dni = perfil.getAttribute('data-dni');
-    tablaCarreras.innerHTML = '📊 Cargando historial...';
-
-    Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=987654321&single=true&output=csv', {
-      download: true,
-      header: true,
-      complete: function(results) {
-        const data = results.data.filter(row => row.DNI === dni);
-        if (data.length === 0) {
-          tablaCarreras.innerHTML = '<p>🕳️ No hay carreras registradas aún.</p>';
-          return;
-        }
-        let html = '<table><thead><tr><th>🏟️ Evento</th><th>📏 Distancia</th><th>⏱️ Tiempo</th><th>⚡ Ritmo</th></tr></thead><tbody>';
-        data.forEach(c => {
-          html += `<tr><td>${c['Evento']}</td><td>${c['Distancia (km)']} km</td><td>${c['Tiempo (min)']} min</td><td>${c['Ritmo (min/km)']} min/km</td></tr>`;
-        });
-        html += '</tbody></table>';
-        tablaCarreras.innerHTML = html;
-      },
-      error: function() {
-        tablaCarreras.innerHTML = '<p>❌ Error al cargar historial.</p>';
-      }
-    });
-  }
 });
 
