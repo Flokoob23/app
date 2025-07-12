@@ -34,6 +34,32 @@ function normalizarTiempo(tiempoStr) {
   return partes.map(p => p.padStart(2, '0')).join(':');
 }
 
+// Formato de input tiempo: muestra 00:00:00 y permite escribir sin borrar ":"
+function formatearInputTiempo(e) {
+  const input = e.target;
+  let val = input.value;
+
+  // Quitar todo lo que no sea número o ":"
+  val = val.replace(/[^\d:]/g, '');
+
+  // Limitar longitud a 8 caracteres (hh:mm:ss)
+  if (val.length > 8) val = val.slice(0, 8);
+
+  // Agregar ":" en las posiciones correctas si el usuario no los escribió
+  if (val.length > 2 && val[2] !== ':') {
+    val = val.slice(0, 2) + ':' + val.slice(2);
+  }
+  if (val.length > 5 && val[5] !== ':') {
+    val = val.slice(0, 5) + ':' + val.slice(5);
+  }
+
+  // Completar con 00 si es más corto
+  const partes = val.split(':');
+  while (partes.length < 3) partes.push('00');
+
+  input.value = partes.map(p => p.padStart(2, '0')).join(':').slice(0, 8);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Degradé inicial
   setTimeout(() => {
@@ -151,12 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         html += '</ul>';
         contenedorEntrenamientos.innerHTML = html;
-  });
-
-  }, error: function() {
+      },
+      error: function() {
         contenedorEntrenamientos.innerHTML = '<p>Error al cargar entrenamientos.</p>';
-  }
-  });
+      }
+    });
   });
 
   btnCerrarModal.addEventListener('click', () => {
@@ -179,18 +204,23 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.classList.remove('hidden');
   });
 
+  // Input para tiempo: formatear al escribir
+  const tiempoInput = document.getElementById('tiempoInput');
+  tiempoInput.addEventListener('input', formatearInputTiempo);
+  tiempoInput.value = '00:00:00';
+
   formCarrera.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const evento = document.getElementById('eventoInput').value.trim();
     const distancia = parseFloat(document.getElementById('distanciaInput').value);
-    const tiempoInput = document.getElementById('tiempoInput').value.trim();
-    const tiempoNormalizado = normalizarTiempo(tiempoInput);
+    const tiempoInputVal = document.getElementById('tiempoInput').value.trim();
+    const tiempoNormalizado = normalizarTiempo(tiempoInputVal);
     const tiempo = convertirTiempoAMinutos(tiempoNormalizado);
     const ritmo = (tiempo / distancia).toFixed(2);
     const dni = perfil.getAttribute('data-dni');
 
-    if (!evento || !distancia || !tiempoInput) {
+    if (!evento || !distancia || !tiempoInputVal) {
       alert('Por favor completá todos los campos');
       return;
     }
@@ -216,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p>✅ ${evento} - ${distancia}km - ${tiempoNormalizado} - Ritmo: ${ritmo} min/km</p>
         `;
         formCarrera.reset();
+        tiempoInput.value = '00:00:00';
       } else {
         alert('❌ ' + data.message);
       }
