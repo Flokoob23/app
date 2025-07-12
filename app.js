@@ -1,7 +1,7 @@
 // app.js con historial de carreras, tiempo hh:mm:ss, y sonido integrado
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
-const historialPostUrl = 'https://script.google.com/macros/s/AKfycbyYWNG8i6GRDm4q0ycLyM2fqv-teSlcXhMPWvL-xsB-A-sh-I0vGbDDEmlodKMmYAV4/exec';
+const historialPostUrl = 'https://script.google.com/macros/s/AKfycbys8VVGrZt_oAX8S4nCNJzu3dIrW95m5FgorABKGe4HyPpbj_VY8OsnRx44u4yJroot/exec';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
@@ -21,6 +21,15 @@ const pantallaHistorial = document.getElementById('pantallaHistorial');
 const btnVolverPerfil2 = document.getElementById('btnVolverPerfil2');
 const formCarrera = document.getElementById('formCarrera');
 const tablaCarreras = document.getElementById('tablaCarreras');
+const tiempoInputField = document.getElementById('tiempoInput');
+
+tempoInputField.value = '00:00:00';
+
+tempoInputField.addEventListener('input', () => {
+  let value = tiempoInputField.value.replace(/[^0-9]/g, '');
+  value = value.padStart(6, '0');
+  tiempoInputField.value = value.replace(/(\d{2})(\d{2})(\d{2})/, '$1:$2:$3');
+});
 
 function convertirTiempoAMinutos(tiempoStr) {
   const partes = tiempoStr.trim().split(':').map(p => parseInt(p, 10));
@@ -149,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p>✅ ${evento} - ${distancia}km - ${tiempoNormalizado} - Ritmo: ${ritmo} min/km</p>
         `;
         formCarrera.reset();
+        tiempoInputField.value = '00:00:00';
       } else {
         alert('❌ ' + data.message);
       }
@@ -156,4 +166,3 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(() => alert('❌ Error de conexión'));
   });
 });
-
