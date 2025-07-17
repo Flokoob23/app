@@ -1,6 +1,6 @@
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
-const historialPostUrl = 'https://script.google.com/macros/s/AKfycbzw9pLSFJg-uGUUNGYKRZWfURRhQqU-KjwzpDIyzy69kkyqDhpPBzKnM3nip96oIQhR/exec';
+const historialPostUrl = 'https://script.google.com/macros/s/AKfycbwgrD_2V3Dda2jy2F2f_uIKyo6PuGGxow98bB2e_jpk_Dj76RXiftokOEpZe-SxOBJw/exec';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
@@ -165,20 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.classList.remove('hidden');
   });
 
-  // Funciones para manejar tiempo
-  function normalizarTiempo(tiempoStr) {
-    const partes = tiempoStr.split(':');
-    while (partes.length < 3) partes.unshift('00');
-    return partes.map(p => p.padStart(2, '0')).join(':');
-  }
-
-  function convertirTiempoAMinutos(tiempoStr) {
-    const partes = tiempoStr.split(':').map(p => parseInt(p, 10));
-    while (partes.length < 3) partes.unshift(0);
-    const [horas, minutos, segundos] = partes;
-    return horas * 60 + minutos + segundos / 60;
-  }
-
   // Formateo del input tiempo mientras se escribe
   tiempoInput.addEventListener('input', (e) => {
     let val = e.target.value.replace(/[^0-9]/g, '');
@@ -195,6 +181,21 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.value = val;
   });
 
+  // Normaliza tiempo a hh:mm:ss
+  function normalizarTiempo(tiempoStr) {
+    const partes = tiempoStr.split(':');
+    while (partes.length < 3) partes.unshift('00');
+    return partes.map(p => p.padStart(2, '0')).join(':');
+  }
+
+  // Convierte tiempo hh:mm:ss a minutos decimales
+  function convertirTiempoAMinutos(tiempoStr) {
+    const partes = tiempoStr.split(':').map(p => parseInt(p, 10));
+    while (partes.length < 3) partes.unshift(0);
+    const [horas, minutos, segundos] = partes;
+    return horas * 60 + minutos + segundos / 60;
+  }
+
   // Manejar envío de nueva carrera
   formCarrera.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -202,13 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const evento = document.getElementById('eventoInput').value.trim();
     const distancia = parseFloat(document.getElementById('distanciaInput').value);
     const tiempoInputVal = document.getElementById('tiempoInput').value.trim();
-    const tiempoNormalizado = normalizarTiempo(tiempoInputVal);
-    const tiempoEnMinutos = convertirTiempoAMinutos(tiempoNormalizado);
-    const ritmo = (tiempoEnMinutos / distancia).toFixed(2);
-    const dni = perfil.getAttribute('data-dni');
 
     if (!evento || !distancia || !tiempoInputVal) {
       alert('Por favor completá todos los campos');
+      return;
+    }
+
+    const tiempoNormalizado = normalizarTiempo(tiempoInputVal);
+    const dni = perfil.getAttribute('data-dni');
+
+    if (!dni) {
+      alert('Error: no se encontró DNI del atleta.');
       return;
     }
 
@@ -218,8 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dni,
         evento,
         distancia,
-        tiempo: tiempoNormalizado,  // enviamos texto hh:mm:ss
-        ritmo
+        tiempo: tiempoNormalizado
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -229,15 +233,13 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       if (data.status === 'ok') {
         sonidoConfirmacion.play();
-        tablaCarreras.innerHTML += `
-          <p>✅ ${evento} - ${distancia}km - ${tiempoNormalizado} - Ritmo: ${ritmo} min/km</p>
-        `;
+        alert('✅ Carrera registrada con éxito.');
         formCarrera.reset();
+        tablaCarreras.innerHTML += `<p>✅ ${evento} - ${distancia} km - ${tiempoNormalizado}</p>`;
       } else {
-        alert('❌ ' + data.message);
+        alert('❌ ' + (data.message || 'Error desconocido'));
       }
     })
     .catch(() => alert('❌ Error de conexión'));
   });
-
 });
