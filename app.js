@@ -1,6 +1,7 @@
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
-const historialPostUrl = 'https://script.google.com/macros/s/AKfycbxK76f-1q9yw6f7Pk-vktuuxbDdw-EoArGTnCcL42MC8YBOpH9poKRImMaQnh8qWe9O/exec';
+
+const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbx8-u8zZ0Mwb9_YkhkzlWDS30FyIfmQrvb_7u_qpEz9MxT6jsmPrVwqwHrbinNR-0QV/exec';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
@@ -181,65 +182,45 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.value = val;
   });
 
-  // Normaliza tiempo a hh:mm:ss
-  function normalizarTiempo(tiempoStr) {
-    const partes = tiempoStr.split(':');
-    while (partes.length < 3) partes.unshift('00');
-    return partes.map(p => p.padStart(2, '0')).join(':');
-  }
-
-  // Convierte tiempo hh:mm:ss a minutos decimales
-  function convertirTiempoAMinutos(tiempoStr) {
-    const partes = tiempoStr.split(':').map(p => parseInt(p, 10));
-    while (partes.length < 3) partes.unshift(0);
-    const [horas, minutos, segundos] = partes;
-    return horas * 60 + minutos + segundos / 60;
-  }
-
-  // Manejar envío de nueva carrera
-  formCarrera.addEventListener('submit', (e) => {
+  // Enviar nuevo historial carrera al Web App
+  formCarrera.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const evento = document.getElementById('eventoInput').value.trim();
     const distancia = parseFloat(document.getElementById('distanciaInput').value);
-    const tiempoInputVal = document.getElementById('tiempoInput').value.trim();
-
-    if (!evento || !distancia || !tiempoInputVal) {
-      alert('Por favor completá todos los campos');
-      return;
-    }
-
-    const tiempoNormalizado = normalizarTiempo(tiempoInputVal);
+    const tiempo = document.getElementById('tiempoInput').value.trim();
     const dni = perfil.getAttribute('data-dni');
 
     if (!dni) {
-      alert('Error: no se encontró DNI del atleta.');
+      alert('❌ Debes iniciar sesión primero.');
+      return;
+    }
+    if (!evento || !distancia || !tiempo) {
+      alert('❌ Completa todos los campos.');
       return;
     }
 
-    fetch(historialPostUrl, {
-      method: 'POST',
-      body: JSON.stringify({
-        dni,
-        evento,
-        distancia,
-        tiempo: tiempoNormalizado
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
+    try {
+      const respuesta = await fetch(urlWebAppHistorial, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dni, evento, distancia, tiempo })
+      });
+
+      const data = await respuesta.json();
+
       if (data.status === 'ok') {
         sonidoConfirmacion.play();
-        alert('✅ Carrera registrada con éxito.');
+        alert('✅ Carrera registrada correctamente.');
         formCarrera.reset();
-        tablaCarreras.innerHTML += `<p>✅ ${evento} - ${distancia} km - ${tiempoNormalizado}</p>`;
+        tablaCarreras.innerHTML += `<p>✅ ${evento} - ${distancia} km - ${tiempo}</p>`;
       } else {
-        alert('❌ ' + (data.message || 'Error desconocido'));
+        alert('❌ Error: ' + data.message);
       }
-    })
-    .catch(() => alert('❌ Error de conexión'));
+    } catch (error) {
+      alert('❌ Error de conexión, revisá la URL del Web App y permisos.');
+      console.error(error);
+    }
   });
 });
+
