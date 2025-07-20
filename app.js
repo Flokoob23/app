@@ -1,8 +1,8 @@
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
 
-const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbx8-u8zZ0Mwb9_YkhkzlWDS30FyIfmQrvb_7u_qpEz9MxT6jsmPrVwqwHrbinNR-0QV/exec';
-const csvHistorialPublico = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1367748190&single=true&output=csv';
+// Aquí actualizo tu URL Web App para el historial de carreras
+const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbw1hcuMH8KAOUxQY13ZcZlLn0W6dpF0jXT-nP9OImrQYA7oSaYBgrdQa1av9NtK9ZMQ/exec';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
@@ -252,31 +252,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Función para cargar historial desde CSV y mostrar en tabla
+  // Cargar historial desde Web App para el atleta actual
   async function cargarHistorial() {
     tablaCarreras.innerHTML = '<p>Cargando historial...</p>';
     try {
-      const res = await fetch(csvHistorialPublico);
-      const csvText = await res.text();
-
-      const resultados = Papa.parse(csvText, { header: true, skipEmptyLines: true });
-      const filas = resultados.data;
-
-      if (!filas.length) {
-        tablaCarreras.innerHTML = '<p>No hay registros de carreras.</p>';
-        return;
-      }
-
-      // Filtrar por DNI actual para mostrar solo sus registros
       const dniActual = perfil.getAttribute('data-dni');
-      const filasFiltradas = filas.filter(f => f.DNI === dniActual);
+      if (!dniActual) throw new Error('DNI no encontrado');
 
-      if (!filasFiltradas.length) {
+      const res = await fetch(`${urlWebAppHistorial}?dni=${dniActual}`);
+      const json = await res.json();
+
+      if (json.status !== 'ok') throw new Error(json.message || 'Error al cargar datos');
+
+      const filasFiltradas = json.data;
+
+      if (filasFiltradas.length === 0) {
         tablaCarreras.innerHTML = '<p>No hay registros para este atleta.</p>';
         return;
       }
 
-      // Construir tabla
       let html = `
         <table class="tabla-historial" style="width:100%; border-collapse: collapse; text-align:left;">
           <thead>
@@ -302,25 +296,28 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       html += '</tbody></table>';
-
       tablaCarreras.innerHTML = html;
+
     } catch (error) {
-      tablaCarreras.innerHTML = '<p>Error al cargar historial.</p>';
+      tablaCarreras.innerHTML = `<p>Error al cargar historial: ${error.message}</p>`;
       console.error(error);
     }
   }
 
-  // Notificaciones Web API (pide permiso)
-  function mostrarNotificacion(titulo, cuerpo) {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'granted') {
-      new Notification(titulo, { body: cuerpo, icon: 'https://i.imgur.com/QyPccnt.png' });
-    } else if (Notification.permission !== 'denied') {
+  // Notificación simple (opcional)
+  function mostrarNotificacion(titulo, mensaje) {
+    if (!("Notification" in window)) return;
+
+    if (Notification.permission === "granted") {
+      new Notification(titulo, { body: mensaje });
+    } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          new Notification(titulo, { body: cuerpo, icon: 'https://i.imgur.com/QyPccnt.png' });
+        if (permission === "granted") {
+          new Notification(titulo, { body: mensaje });
         }
       });
     }
   }
+
 });
+
