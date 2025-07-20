@@ -8,6 +8,7 @@ body, html {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .pantalla {
@@ -23,6 +24,40 @@ body, html {
 .hidden {
   display: none !important;
   opacity: 0;
+}
+
+/* Modo oscuro */
+.dark-mode {
+  background-color: #121212;
+  color: #FFD600;
+}
+
+/* Modo oscuro - pantalla perfil */
+.dark-mode .pantallaPerfil {
+  background-color: #222;
+  color: #FFD600;
+}
+
+/* Botón toggle modo */
+#toggleModo {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: 2px solid #FFD600;
+  color: #FFD600;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 700;
+  user-select: none;
+  z-index: 9999;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#toggleModo:hover {
+  background-color: #FFD600;
+  color: black;
 }
 
 /* Pantalla 1 - Bienvenida */
@@ -140,18 +175,18 @@ body, html {
 .pantallaPerfil {
   background: white;
   color: #333;
+  flex-direction: column;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 .perfil-contenedor {
   display: flex;
   align-items: center;
-  max-width: 720px;
-  margin: 2rem auto;
   gap: 2rem;
-  padding: 1.5rem 1rem;
-  background: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 .foto-perfil {
@@ -215,9 +250,44 @@ body, html {
   margin-bottom: 1rem;
 }
 
-/* Tabla carreras */
-#tablaCarreras p {
-  margin: 0.4rem 0;
-  font-weight: 600;
+/* Tabla historial carreras */
+.tabla-historial {
+  margin-top: 1rem;
+  border-collapse: collapse;
+  width: 100%;
 }
+
+.tabla-historial th,
+.tabla-historial td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.tabla-historial th {
+  background-color: #FFA500;
+  color: black;
+  text-align: left;
+}
+
+/* Pantalla modal entrenamientos */
+#modalEntrenamientos {
+  background: white;
+  color: #333;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  overflow-y: auto;
+}
+
+/* Modo oscuro en modal */
+.dark-mode #modalEntrenamientos {
+  background: #222;
+  color: #FFD600;
+}
+
+/* Notificaciones y sonidos */
+/* No es necesario CSS específico para sonidos */
 
