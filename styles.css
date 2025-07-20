@@ -1,4 +1,4 @@
-//* Reset y fuentes */
+/* Reset y fuentes */
 body, html {
   margin: 0; padding: 0; height: 100%;
   font-family: 'Poppins', sans-serif;
@@ -326,5 +326,12 @@ body, html {
   overflow-y: auto;
 }
 
-/* Notificaciones y sonidos */
-/* No es necesario CSS específico para sonidos */
+/* Confirmación pago */
+#confirmacionPago {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: green;
+  margin-top: 1rem;
+  display: none;
+}
+
