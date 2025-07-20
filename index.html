@@ -10,10 +10,12 @@
 </head>
 <body>
 
+  <!-- Botón Modo Oscuro/Claro -->
   <button id="toggleModo" aria-label="Cambiar modo oscuro/claro" style="position:fixed; top:1rem; right:1rem; z-index:1000; background:#FFD600; color:black; border:none; padding:0.5rem 1rem; border-radius:20px; font-weight:bold; cursor:pointer;">
     🌙 Oscuro
   </button>
 
+  <!-- Pantalla 1: Bienvenida -->
   <div id="pantallaBienvenida" class="pantalla">
     <div class="bienvenida-contenedor">
       <h1>FLOKOOB</h1>
@@ -22,6 +24,7 @@
     </div>
   </div>
 
+  <!-- Pantalla 2: Gimnasio -->
   <div id="pantallaGimnasio" class="pantalla hidden">
     <div class="gimnasio-contenedor">
       <div class="gimnasio-titulo">
@@ -42,6 +45,7 @@
     </div>
   </div>
 
+  <!-- Pantalla 3: Perfil del Atleta -->
   <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden">
     <div class="perfil-contenedor">
       <img id="fotoAtleta" class="foto-perfil" src="" alt="Foto del Atleta" />
@@ -53,11 +57,11 @@
           <button id="btnHistorial">🏁 HISTORIAL EN CARRERAS</button>
           <button id="btnPagoCuota">💳 PAGO DE CUOTA</button>
         </div>
-        <p id="confirmacionPago" style="color: green; font-weight: 700; font-size: 1.2rem; margin-top: 10px; display:none;">✅ Pago confirmado. ¡Gracias!</p>
       </div>
     </div>
   </div>
 
+  <!-- Pantalla 4: Entrenamientos -->
   <div id="modalEntrenamientos" class="pantalla hidden">
     <div class="gimnasio-contenedor">
       <h2>📋 Entrenamientos</h2>
@@ -66,6 +70,7 @@
     </div>
   </div>
 
+  <!-- Pantalla 5: Historial Carreras -->
   <div id="pantallaHistorial" class="pantalla hidden">
     <div class="gimnasio-contenedor">
       <h2>🏁 Historial en Carreras</h2>
@@ -100,8 +105,21 @@
     </div>
   </div>
 
+  <!-- Modal Confirmación Pago de Cuota -->
+  <div id="modalPago" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalPagoTitulo" tabindex="-1">
+    <div class="modal-content">
+      <h2 id="modalPagoTitulo">Confirmar pago</h2>
+      <p id="modalPagoMensaje">¿Querés proceder al pago de la cuota de $15.000 por MercadoPago?</p>
+      <div class="modal-buttons">
+        <button id="btnConfirmarPago" class="btn-iniciar">Confirmar</button>
+        <button id="btnCancelarPago" class="btn-iniciar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
+
 
 
