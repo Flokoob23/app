@@ -105,21 +105,17 @@
     </div>
   </div>
 
-  <!-- Modal Confirmación Pago de Cuota -->
-  <div id="modalPago" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalPagoTitulo" tabindex="-1">
-    <div class="modal-content">
-      <h2 id="modalPagoTitulo">Confirmar pago</h2>
-      <p id="modalPagoMensaje">¿Querés proceder al pago de la cuota de $15.000 por MercadoPago?</p>
-      <div class="modal-buttons">
-        <button id="btnConfirmarPago" class="btn-iniciar">Confirmar</button>
-        <button id="btnCancelarPago" class="btn-iniciar">Cancelar</button>
-      </div>
+  <!-- Modal Pago de Cuota -->
+  <div id="modalPago" class="pantalla hidden" style="position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.6); width: 100vw; height: 100vh; justify-content: center; align-items: center; z-index: 10000;">
+    <div style="background: white; color: black; padding: 2rem; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 0 10px #000;">
+      <h2 id="modalPagoTitulo" style="margin-bottom: 1rem;">Confirmar pago</h2>
+      <p id="modalPagoMensaje" style="margin-bottom: 2rem;">¿Querés proceder al pago de la cuota de $15.000 por MercadoPago?</p>
+      <button id="btnConfirmarPago" style="margin-right: 1rem; padding: 0.8rem 1.5rem; font-weight: 600; cursor: pointer;">Confirmar pago</button>
+      <button id="btnCancelarPago" style="padding: 0.8rem 1.5rem; cursor: pointer;">Cancelar</button>
     </div>
   </div>
 
   <script src="app.js"></script>
 </body>
 </html>
-
-
 
