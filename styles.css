@@ -11,6 +11,7 @@ body, html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Pantallas */
 .pantalla {
   width: 100vw;
   height: 100vh;
@@ -32,10 +33,53 @@ body, html {
   color: #FFD600;
 }
 
-/* Modo oscuro - pantalla perfil */
 .dark-mode .pantallaPerfil {
   background-color: #222;
   color: #FFD600;
+}
+
+.dark-mode #modalEntrenamientos {
+  background: #222;
+  color: #FFD600;
+}
+
+/* Modo claro */
+.modo-claro {
+  background-color: white;
+  color: black;
+}
+
+.modo-claro .pantallaPerfil,
+.modo-claro #modalEntrenamientos {
+  background: #f9f9f9;
+  color: black;
+}
+
+.modo-claro #pantallaGimnasio {
+  background-color: #ffecd2;
+  color: black;
+}
+
+.modo-claro .btn-iniciar,
+.modo-claro .form-login button {
+  background-color: #333;
+  color: #FFA500;
+}
+
+.modo-claro .btn-iniciar:hover,
+.modo-claro .form-login button:hover {
+  background-color: #555;
+}
+
+.modo-claro #toggleModo {
+  background-color: #333;
+  color: #FFD600;
+  border-color: #FFD600;
+}
+
+.modo-claro #toggleModo:hover {
+  background-color: #FFD600;
+  color: black;
 }
 
 /* Botón toggle modo */
@@ -280,12 +324,6 @@ body, html {
   border-radius: 15px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
   overflow-y: auto;
-}
-
-/* Modo oscuro en modal */
-.dark-mode #modalEntrenamientos {
-  background: #222;
-  color: #FFD600;
 }
 
 /* Notificaciones y sonidos */
