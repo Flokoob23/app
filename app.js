@@ -1,8 +1,7 @@
 const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=0&single=true&output=csv';
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
 
-// Aquí actualizo tu URL Web App para el historial de carreras
-const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbw1hcuMH8KAOUxQY13ZcZlLn0W6dpF0jXT-nP9OImrQYA7oSaYBgrdQa1av9NtK9ZMQ/exec';
+const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbwDTYRZ2I3YvZTBkeBwqM66tJKkClktkAdJKYH9wbs1eqxHa0qGXnZc3ADZ94TheXlp/exec';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
@@ -252,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Cargar historial desde Web App para el atleta actual
+  // Función para cargar historial desde Web App y mostrar en tabla
   async function cargarHistorial() {
     tablaCarreras.innerHTML = '<p>Cargando historial...</p>';
     try {
@@ -297,27 +296,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       html += '</tbody></table>';
       tablaCarreras.innerHTML = html;
-
     } catch (error) {
       tablaCarreras.innerHTML = `<p>Error al cargar historial: ${error.message}</p>`;
       console.error(error);
     }
   }
 
-  // Notificación simple (opcional)
-  function mostrarNotificacion(titulo, mensaje) {
-    if (!("Notification" in window)) return;
-
-    if (Notification.permission === "granted") {
-      new Notification(titulo, { body: mensaje });
-    } else if (Notification.permission !== "denied") {
+  // Notificaciones Web API (pide permiso)
+  function mostrarNotificacion(titulo, cuerpo) {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'granted') {
+      new Notification(titulo, { body: cuerpo, icon: 'https://i.imgur.com/QyPccnt.png' });
+    } else if (Notification.permission !== 'denied') {
       Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          new Notification(titulo, { body: mensaje });
+        if (permission === 'granted') {
+          new Notification(titulo, { body: cuerpo, icon: 'https://i.imgur.com/QyPccnt.png' });
         }
       });
     }
   }
-
 });
 
