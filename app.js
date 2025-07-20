@@ -2,12 +2,10 @@ const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
 
 const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbwB58xj2evrz8VI4II9Q-SI64mexit0iFqjQhmzvUTbwfKHLbzt1ZwcGmJ7YdONja-W/exec';
-const csvHistorialPublico = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1367748190&single=true&output=csv';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Elementos principales
   const body = document.body;
   const bienvenida = document.getElementById('pantallaBienvenida');
   const gimnasio = document.getElementById('pantallaGimnasio');
@@ -29,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnPagoCuota = document.getElementById('btnPagoCuota');
   const confirmacionPago = document.getElementById('confirmacionPago');
 
-  // Carga modo oscuro/claro guardado en localStorage
+  // Modo oscuro / claro guardado
   const modoGuardado = localStorage.getItem('modo') || 'claro';
   setModo(modoGuardado);
 
@@ -49,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('modo', modo);
   }
 
-  // Degradado inicial - bienvenida a gimnasio
+  // Transición bienvenida a gimnasio
   setTimeout(() => {
     bienvenida.style.transition = 'opacity 1.2s ease';
     bienvenida.style.opacity = 0;
@@ -64,13 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1200);
   }, 2500);
 
-  // Mostrar formulario login
   btnIniciarSesion.addEventListener('click', () => {
     btnIniciarSesion.style.display = 'none';
     formLogin.classList.remove('hidden');
   });
 
-  // Login y mostrar perfil
   btnLogin.addEventListener('click', () => {
     const dni = document.getElementById('dniInput').value.trim();
     const clave = document.getElementById('claveInput').value.trim();
@@ -105,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Función mostrar perfil
   function mostrarPerfil(atleta) {
     gimnasio.classList.add('hidden');
     bienvenida.classList.add('hidden');
@@ -120,11 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('fotoAtleta').src = atleta.Foto;
     perfil.setAttribute('data-dni', atleta.DNI);
 
-    // Ocultar mensaje de pago al mostrar perfil (por si)
     confirmacionPago.style.display = 'none';
   }
 
-  // Mostrar entrenamientos
   btnIrEntrenamientos.addEventListener('click', () => {
     const dni = perfil.getAttribute('data-dni');
     if (!dni) {
@@ -187,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.classList.remove('hidden');
   });
 
-  // Mostrar historial en carreras
   btnHistorial.addEventListener('click', () => {
     perfil.classList.add('hidden');
     pantallaHistorial.classList.remove('hidden');
@@ -202,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.classList.remove('hidden');
   });
 
-  // Cargar historial desde WebApp
   function cargarHistorial() {
     const dni = perfil.getAttribute('data-dni');
     if (!dni) return;
@@ -217,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
           tablaCarreras.innerHTML = '<p>No hay carreras registradas.</p>';
           return;
         }
-        // Crear tabla
         let html = '<table class="tabla-historial"><thead><tr><th>Evento</th><th>Distancia (km)</th><th>Tiempo</th><th>Fecha Registro</th></tr></thead><tbody>';
         data.forEach(carrera => {
           html += `<tr>
@@ -235,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
-  // Agregar carrera (formulario)
   formCarrera.addEventListener('submit', () => {
     const dni = perfil.getAttribute('data-dni');
     if (!dni) {
@@ -276,26 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(() => alert('Error al registrar carrera'));
   });
 
-  // Botón pago cuota
   btnPagoCuota.addEventListener('click', () => {
-    // Link MercadoPago con alias desa2025 y monto fijo 15000 ARS
-    // Si MercadoPago no permite monto fijo en alias, el monto queda fijo en la plataforma
-    const urlPago = 'https://mpago.la/2cW6f6H'; // Esto es un ejemplo: usar link real de tu cuenta MP
-    // Para alias desa2025, el link es:
-    // https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=desa2025
-    // Pero MercadoPago NO permite monto fijo por alias, por eso creamos link personalizado
-
-    // Alternativa: crear link pago fijo desde MP y usar aquí (reemplazar urlPago)
-    // Para demo uso mpago.la que es un acortador oficial MP, reemplazar por tu link
-
+    const urlPago = 'https://mpago.li/1RdecWE';
     window.open(urlPago, '_blank');
 
-    // Mostrar mensaje de confirmación después de un tiempo para simular retorno
+    // Mostrar confirmación después de 3 segundos
     setTimeout(() => {
       confirmacionPago.style.display = 'block';
       sonidoConfirmacion.play();
     }, 3000);
   });
 });
-
-
