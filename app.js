@@ -2,10 +2,13 @@ const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
 
 const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbx8-u8zZ0Mwb9_YkhkzlWDS30FyIfmQrvb_7u_qpEz9MxT6jsmPrVwqwHrbinNR-0QV/exec';
+const csvHistorialPublico = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1367748190&single=true&output=csv';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Elementos principales
+  const body = document.body;
   const bienvenida = document.getElementById('pantallaBienvenida');
   const gimnasio = document.getElementById('pantallaGimnasio');
   const perfil = document.getElementById('pantallaPerfil');
@@ -16,15 +19,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const pantallaEntrenamientos = document.getElementById('modalEntrenamientos');
   const contenedorEntrenamientos = document.getElementById('listaEntrenamientos');
   const btnVolverPerfil = document.getElementById('btnCerrarModal');
-
   const btnHistorial = document.getElementById('btnHistorial');
   const pantallaHistorial = document.getElementById('pantallaHistorial');
   const btnVolverPerfil2 = document.getElementById('btnVolverPerfil2');
   const formCarrera = document.getElementById('formCarrera');
   const tablaCarreras = document.getElementById('tablaCarreras');
   const tiempoInput = document.getElementById('tiempoInput');
+  const toggleModo = document.getElementById('toggleModo');
 
-  // Degradado inicial
+  // Carga modo oscuro/claro guardado en localStorage
+  const modoGuardado = localStorage.getItem('modo') || 'claro';
+  setModo(modoGuardado);
+
+  toggleModo.addEventListener('click', () => {
+    const nuevoModo = body.classList.contains('dark-mode') ? 'claro' : 'oscuro';
+    setModo(nuevoModo);
+  });
+
+  function setModo(modo) {
+    if (modo === 'oscuro') {
+      body.classList.add('dark-mode');
+      toggleModo.textContent = '🌞 Claro';
+    } else {
+      body.classList.remove('dark-mode');
+      toggleModo.textContent = '🌙 Oscuro';
+    }
+    localStorage.setItem('modo', modo);
+  }
+
+  // Degradado inicial - bienvenida a gimnasio
   setTimeout(() => {
     bienvenida.style.transition = 'opacity 1.2s ease';
     bienvenida.style.opacity = 0;
@@ -116,32 +139,37 @@ document.addEventListener('DOMContentLoaded', () => {
       header: false,
       complete: function(results) {
         const data = results.data;
-        const fila = data.find(row => row[0] === dni);
+        // Aquí busco todos los entrenamientos del atleta (podés modificar para mostrar todos)
+        const filas = data.filter(row => row[0] === dni);
 
-        if (!fila) {
+        if (!filas.length) {
           contenedorEntrenamientos.innerHTML = '<p>No se encontraron entrenamientos.</p>';
           return;
         }
 
-        const fecha = fila[1];
-        const ejercicios = fila.slice(2).filter(e => e && e.trim() !== '');
+        let html = '';
+        filas.forEach(fila => {
+          const fecha = fila[1];
+          const ejercicios = fila.slice(2).filter(e => e && e.trim() !== '');
 
-        let html = `<p><strong>Fecha:</strong> ${fecha}</p>`;
-        html += '<ul style="list-style: none; padding: 0;">';
+          html += `<p><strong>Fecha:</strong> ${fecha}</p>`;
+          html += '<ul style="list-style: none; padding: 0;">';
 
-        ejercicios.forEach(ejercicio => {
-          const encoded = encodeURIComponent(ejercicio);
-          html += `
-            <li style="margin-bottom: 1rem;">
-              <span>${ejercicio}</span>
-              <a href="https://www.google.com/search?q=${encoded}" target="_blank" title="Buscar en Google" style="margin-left: 10px;">
-                🔍
-              </a>
-            </li>
-          `;
+          ejercicios.forEach(ejercicio => {
+            const encoded = encodeURIComponent(ejercicio);
+            html += `
+              <li style="margin-bottom: 1rem;">
+                <span>${ejercicio}</span>
+                <a href="https://www.google.com/search?q=${encoded}" target="_blank" title="Buscar en Google" style="margin-left: 10px;">
+                  🔍
+                </a>
+              </li>
+            `;
+          });
+
+          html += '</ul><hr style="border-color: #ccc;">';
         });
 
-        html += '</ul>';
         contenedorEntrenamientos.innerHTML = html;
       },
       error: function() {
@@ -159,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
   btnHistorial.addEventListener('click', () => {
     perfil.classList.add('hidden');
     pantallaHistorial.classList.remove('hidden');
+    cargarHistorial();
   });
 
   btnVolverPerfil2.addEventListener('click', () => {
@@ -182,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.value = val;
   });
 
-  // Enviar nuevo historial carrera al Web App
+  // Enviar nuevo historial carrera al Web App y actualizar tabla
   formCarrera.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -213,7 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
         sonidoConfirmacion.play();
         alert('✅ Carrera registrada correctamente.');
         formCarrera.reset();
-        tablaCarreras.innerHTML += `<p>✅ ${evento} - ${distancia} km - ${tiempo}</p>`;
+        // Actualizo tabla sin recargar
+        cargarHistorial();
+        mostrarNotificacion('Carrera registrada', `Evento: ${evento} - ${distancia} km - ${tiempo}`);
       } else {
         alert('❌ Error: ' + data.message);
       }
@@ -222,5 +253,76 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(error);
     }
   });
-});
 
+  // Función para cargar historial desde CSV y mostrar en tabla
+  async function cargarHistorial() {
+    tablaCarreras.innerHTML = '<p>Cargando historial...</p>';
+    try {
+      const res = await fetch(csvHistorialPublico);
+      const csvText = await res.text();
+
+      const resultados = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+      const filas = resultados.data;
+
+      if (!filas.length) {
+        tablaCarreras.innerHTML = '<p>No hay registros de carreras.</p>';
+        return;
+      }
+
+      // Filtrar por DNI actual para mostrar solo sus registros
+      const dniActual = perfil.getAttribute('data-dni');
+      const filasFiltradas = filas.filter(f => f.DNI === dniActual);
+
+      if (!filasFiltradas.length) {
+        tablaCarreras.innerHTML = '<p>No hay registros para este atleta.</p>';
+        return;
+      }
+
+      // Construir tabla
+      let html = `
+        <table class="tabla-historial" style="width:100%; border-collapse: collapse; text-align:left;">
+          <thead>
+            <tr style="background:#FFA500; color:black;">
+              <th style="padding: 8px; border:1px solid #ddd;">Evento</th>
+              <th style="padding: 8px; border:1px solid #ddd;">Distancia (km)</th>
+              <th style="padding: 8px; border:1px solid #ddd;">Tiempo</th>
+              <th style="padding: 8px; border:1px solid #ddd;">Fecha Registro</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      filasFiltradas.forEach(fila => {
+        html += `
+          <tr>
+            <td style="padding: 8px; border:1px solid #ddd;">${fila.Evento}</td>
+            <td style="padding: 8px; border:1px solid #ddd;">${fila.Distancia}</td>
+            <td style="padding: 8px; border:1px solid #ddd;">${fila.Tiempo}</td>
+            <td style="padding: 8px; border:1px solid #ddd;">${fila.FechaRegistro}</td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+
+      tablaCarreras.innerHTML = html;
+    } catch (error) {
+      tablaCarreras.innerHTML = '<p>Error al cargar historial.</p>';
+      console.error(error);
+    }
+  }
+
+  // Notificaciones Web API (pide permiso)
+  function mostrarNotificacion(titulo, cuerpo) {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'granted') {
+      new Notification(titulo, { body: cuerpo, icon: 'https://i.imgur.com/QyPccnt.png' });
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification(titulo, { body: cuerpo, icon: 'https://i.imgur.com/QyPccnt.png' });
+        }
+      });
+    }
+  }
+});
