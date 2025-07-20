@@ -139,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
       header: false,
       complete: function(results) {
         const data = results.data;
-        // Aquí busco todos los entrenamientos del atleta (podés modificar para mostrar todos)
         const filas = data.filter(row => row[0] === dni);
 
         if (!filas.length) {
@@ -242,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sonidoConfirmacion.play();
         alert('✅ Carrera registrada correctamente.');
         formCarrera.reset();
-        // Actualizo tabla sin recargar
         cargarHistorial();
         mostrarNotificacion('Carrera registrada', `Evento: ${evento} - ${distancia} km - ${tiempo}`);
       } else {
