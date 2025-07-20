@@ -2,6 +2,7 @@ const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
 
 const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbwB58xj2evrz8VI4II9Q-SI64mexit0iFqjQhmzvUTbwfKHLbzt1ZwcGmJ7YdONja-W/exec';
+const csvHistorialPublico = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1367748190&single=true&output=csv';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
@@ -25,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const tablaCarreras = document.getElementById('tablaCarreras');
   const tiempoInput = document.getElementById('tiempoInput');
   const toggleModo = document.getElementById('toggleModo');
+  const btnPagoCuota = document.getElementById('btnPagoCuota');
+  const confirmacionPago = document.getElementById('confirmacionPago');
 
   // Carga modo oscuro/claro guardado en localStorage
   const modoGuardado = localStorage.getItem('modo') || 'claro';
@@ -116,6 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('nombreAtleta').textContent = atleta.Nombre;
     document.getElementById('fotoAtleta').src = atleta.Foto;
     perfil.setAttribute('data-dni', atleta.DNI);
+
+    // Ocultar mensaje de pago al mostrar perfil (por si)
+    confirmacionPago.style.display = 'none';
   }
 
   // Mostrar entrenamientos
@@ -185,6 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
   btnHistorial.addEventListener('click', () => {
     perfil.classList.add('hidden');
     pantallaHistorial.classList.remove('hidden');
+    pantallaHistorial.style.opacity = 0;
+    setTimeout(() => pantallaHistorial.style.opacity = 1, 50);
+
     cargarHistorial();
   });
 
@@ -193,127 +202,100 @@ document.addEventListener('DOMContentLoaded', () => {
     perfil.classList.remove('hidden');
   });
 
-  // Formateo del input tiempo mientras se escribe
-  tiempoInput.addEventListener('input', (e) => {
-    let val = e.target.value.replace(/[^0-9]/g, '');
-    if (val.length > 6) val = val.slice(0, 6);
+  // Cargar historial desde WebApp
+  function cargarHistorial() {
+    const dni = perfil.getAttribute('data-dni');
+    if (!dni) return;
 
-    if (val.length <= 2) {
-      val = val;
-    } else if (val.length <= 4) {
-      val = val.slice(0, val.length - 2) + ':' + val.slice(val.length - 2);
-    } else {
-      val = val.slice(0, 2) + ':' + val.slice(2, 4) + ':' + val.slice(4);
+    fetch(`${urlWebAppHistorial}?dni=${dni}`)
+      .then(res => {
+        if (!res.ok) throw new Error('No se pudo cargar historial');
+        return res.json();
+      })
+      .then(data => {
+        if (data.length === 0) {
+          tablaCarreras.innerHTML = '<p>No hay carreras registradas.</p>';
+          return;
+        }
+        // Crear tabla
+        let html = '<table class="tabla-historial"><thead><tr><th>Evento</th><th>Distancia (km)</th><th>Tiempo</th><th>Fecha Registro</th></tr></thead><tbody>';
+        data.forEach(carrera => {
+          html += `<tr>
+                    <td>${carrera.Evento}</td>
+                    <td>${carrera.Distancia}</td>
+                    <td>${carrera.Tiempo}</td>
+                    <td>${carrera.FechaRegistro}</td>
+                  </tr>`;
+        });
+        html += '</tbody></table>';
+        tablaCarreras.innerHTML = html;
+      })
+      .catch(() => {
+        tablaCarreras.innerHTML = '<p>Error al cargar historial.</p>';
+      });
+  }
+
+  // Agregar carrera (formulario)
+  formCarrera.addEventListener('submit', () => {
+    const dni = perfil.getAttribute('data-dni');
+    if (!dni) {
+      alert('No se encontró DNI del atleta.');
+      return;
     }
-
-    e.target.value = val;
-  });
-
-  // Enviar nuevo historial carrera al Web App y actualizar tabla
-  formCarrera.addEventListener('submit', async (e) => {
-    e.preventDefault();
 
     const evento = document.getElementById('eventoInput').value.trim();
-    const distancia = parseFloat(document.getElementById('distanciaInput').value);
-    const tiempo = document.getElementById('tiempoInput').value.trim();
-    const dni = perfil.getAttribute('data-dni');
+    const distancia = document.getElementById('distanciaInput').value.trim();
+    const tiempo = tiempoInput.value.trim();
 
-    if (!dni) {
-      alert('❌ Debes iniciar sesión primero.');
-      return;
-    }
     if (!evento || !distancia || !tiempo) {
-      alert('❌ Completa todos los campos.');
+      alert('Por favor, completá todos los campos.');
       return;
     }
 
-    try {
-      const respuesta = await fetch(urlWebAppHistorial, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dni, evento, distancia, tiempo })
-      });
+    const data = {
+      dni,
+      evento,
+      distancia,
+      tiempo
+    };
 
-      const data = await respuesta.json();
-
-      if (data.status === 'ok') {
-        sonidoConfirmacion.play();
-        alert('✅ Carrera registrada correctamente.');
-        formCarrera.reset();
-        cargarHistorial();
-        mostrarNotificacion('Carrera registrada', `Evento: ${evento} - ${distancia} km - ${tiempo}`);
-      } else {
-        alert('❌ Error: ' + data.message);
-      }
-    } catch (error) {
-      alert('❌ Error de conexión, revisá la URL del Web App y permisos.');
-      console.error(error);
-    }
+    fetch(urlWebAppHistorial, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Error al registrar carrera');
+      return res.text();
+    })
+    .then(() => {
+      alert('Carrera registrada con éxito');
+      cargarHistorial();
+      formCarrera.reset();
+    })
+    .catch(() => alert('Error al registrar carrera'));
   });
 
-  // Función para cargar historial desde Web App y mostrar en tabla
-  async function cargarHistorial() {
-    tablaCarreras.innerHTML = '<p>Cargando historial...</p>';
-    try {
-      const dniActual = perfil.getAttribute('data-dni');
-      if (!dniActual) throw new Error('DNI no encontrado');
+  // Botón pago cuota
+  btnPagoCuota.addEventListener('click', () => {
+    // Link MercadoPago con alias desa2025 y monto fijo 15000 ARS
+    // Si MercadoPago no permite monto fijo en alias, el monto queda fijo en la plataforma
+    const urlPago = 'https://mpago.la/2cW6f6H'; // Esto es un ejemplo: usar link real de tu cuenta MP
+    // Para alias desa2025, el link es:
+    // https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=desa2025
+    // Pero MercadoPago NO permite monto fijo por alias, por eso creamos link personalizado
 
-      const res = await fetch(`${urlWebAppHistorial}?dni=${dniActual}`);
-      const json = await res.json();
+    // Alternativa: crear link pago fijo desde MP y usar aquí (reemplazar urlPago)
+    // Para demo uso mpago.la que es un acortador oficial MP, reemplazar por tu link
 
-      if (json.status !== 'ok') throw new Error(json.message || 'Error al cargar datos');
+    window.open(urlPago, '_blank');
 
-      const filasFiltradas = json.data;
-
-      if (filasFiltradas.length === 0) {
-        tablaCarreras.innerHTML = '<p>No hay registros para este atleta.</p>';
-        return;
-      }
-
-      let html = `
-        <table class="tabla-historial" style="width:100%; border-collapse: collapse; text-align:left;">
-          <thead>
-            <tr style="background:#FFA500; color:black;">
-              <th style="padding: 8px; border:1px solid #ddd;">Evento</th>
-              <th style="padding: 8px; border:1px solid #ddd;">Distancia (km)</th>
-              <th style="padding: 8px; border:1px solid #ddd;">Tiempo</th>
-              <th style="padding: 8px; border:1px solid #ddd;">Fecha Registro</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      filasFiltradas.forEach(fila => {
-        html += `
-          <tr>
-            <td style="padding: 8px; border:1px solid #ddd;">${fila.Evento}</td>
-            <td style="padding: 8px; border:1px solid #ddd;">${fila.Distancia}</td>
-            <td style="padding: 8px; border:1px solid #ddd;">${fila.Tiempo}</td>
-            <td style="padding: 8px; border:1px solid #ddd;">${fila.FechaRegistro}</td>
-          </tr>
-        `;
-      });
-
-      html += '</tbody></table>';
-      tablaCarreras.innerHTML = html;
-    } catch (error) {
-      tablaCarreras.innerHTML = `<p>Error al cargar historial: ${error.message}</p>`;
-      console.error(error);
-    }
-  }
-
-  // Notificaciones Web API (pide permiso)
-  function mostrarNotificacion(titulo, cuerpo) {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'granted') {
-      new Notification(titulo, { body: cuerpo, icon: 'https://i.imgur.com/QyPccnt.png' });
-    } else if (Notification.permission !== 'denied') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          new Notification(titulo, { body: cuerpo, icon: 'https://i.imgur.com/QyPccnt.png' });
-        }
-      });
-    }
-  }
+    // Mostrar mensaje de confirmación después de un tiempo para simular retorno
+    setTimeout(() => {
+      confirmacionPago.style.display = 'block';
+      sonidoConfirmacion.play();
+    }, 3000);
+  });
 });
+
 
