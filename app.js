@@ -4,11 +4,12 @@ const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOm
 const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbwB58xj2evrz8VI4II9Q-SI64mexit0iFqjQhmzvUTbwfKHLbzt1ZwcGmJ7YdONja-W/exec';
 const csvHistorialPublico = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1367748190&single=true&output=csv';
 
-const csvPagosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1567006283&single=true&output=csv';
+const pagosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1567006283&single=true&output=csv';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Elementos principales
   const body = document.body;
   const bienvenida = document.getElementById('pantallaBienvenida');
   const gimnasio = document.getElementById('pantallaGimnasio');
@@ -27,20 +28,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const tablaCarreras = document.getElementById('tablaCarreras');
   const tiempoInput = document.getElementById('tiempoInput');
   const toggleModo = document.getElementById('toggleModo');
+  const estadoPago = document.getElementById('estadoPago');
 
   // Modal pago cuota
   const btnPagoCuota = document.getElementById('btnPagoCuota');
   const modalPago = document.getElementById('modalPago');
   const btnConfirmarPago = document.getElementById('btnConfirmarPago');
   const btnCancelarPago = document.getElementById('btnCancelarPago');
-  const modalTitulo = document.getElementById('modalPagoTitulo');
-  const modalMensaje = document.getElementById('modalPagoMensaje');
-  const inputAlias = document.getElementById('inputAlias');
-  const inputMonto = document.getElementById('inputMonto');
-  const inputComprobante = document.getElementById('inputComprobante');
+  const comprobanteInput = document.getElementById('comprobanteInput');
   const mensajeComprobante = document.getElementById('mensajeComprobante');
+  const aliasPago = document.getElementById('aliasPago');
 
-  // Modo oscuro/claro guardado
+  // Carga modo oscuro/claro guardado en localStorage
   const modoGuardado = localStorage.getItem('modo') || 'claro';
   setModo(modoGuardado);
 
@@ -52,9 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function setModo(modo) {
     if (modo === 'oscuro') {
       body.classList.add('dark-mode');
+      body.classList.remove('modo-claro');
       toggleModo.textContent = '🌞 Claro';
     } else {
       body.classList.remove('dark-mode');
+      body.classList.add('modo-claro');
       toggleModo.textContent = '🌙 Oscuro';
     }
     localStorage.setItem('modo', modo);
@@ -106,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Foto: atletaFila[3] || 'https://via.placeholder.com/150?text=Sin+Foto'
           };
           mostrarPerfil(atleta);
-          cargarEstadoPago(atleta.DNI);
+          chequearPago(atleta.DNI);
         } else {
           alert('❌ DNI o clave incorrectos');
         }
@@ -117,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Mostrar perfil
+  // Función mostrar perfil
   function mostrarPerfil(atleta) {
     gimnasio.classList.add('hidden');
     bienvenida.classList.add('hidden');
@@ -131,54 +132,36 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('nombreAtleta').textContent = atleta.Nombre;
     document.getElementById('fotoAtleta').src = atleta.Foto;
     perfil.setAttribute('data-dni', atleta.DNI);
-
-    // Limpiar estado pago
-    document.getElementById('estadoPago').textContent = '';
   }
 
-  // Cargar estado pago (de la hoja de pagos)
-  async function cargarEstadoPago(dni) {
+  // Chequear pago confirmado en la hoja de pagos
+  async function chequearPago(dni) {
+    estadoPago.textContent = 'Cargando estado de pago...';
+    estadoPago.classList.remove('confirmado', 'no-confirmado');
     try {
-      const res = await fetch(csvPagosUrl);
+      const res = await fetch(pagosUrl);
       const csvText = await res.text();
-
       const resultados = Papa.parse(csvText, { header: true, skipEmptyLines: true });
       const filas = resultados.data;
 
-      // Buscar pago del DNI
-      const pago = filas.find(f => f.DNI === dni);
-
-      const estadoPagoEl = document.getElementById('estadoPago');
-
-      if (!pago) {
-        estadoPagoEl.innerHTML = `<strong>Estado pago:</strong> <span style="color: #d35400;">No se registró ningún pago pendiente.</span>`;
-        return;
-      }
-
-      // Columna D es confirmación, el CSV parseado es un objeto, tomamos la clave que corresponda
-      // La columna D según el CSV podría tener el nombre "Confirmado" o similar, lo chequeamos:
-      // Para seguridad, buscamos la clave con columna index 3
-      // Pero como PapaParse parsea con header:true, usamos la propiedad que corresponde (buscamos exacto)
-
-      // Para revisar: mostramos keys:
-      // console.log(Object.keys(pago));
-
-      // Vamos a iterar keys para encontrar el booleano en la posición 3
-      const keys = Object.keys(pago);
-      let claveConfirmacion = null;
-      if (keys.length >= 4) claveConfirmacion = keys[3];
-
-      const confirmadoRaw = claveConfirmacion ? pago[claveConfirmacion] : 'FALSE';
-      const confirmado = confirmadoRaw.toString().toLowerCase() === 'true';
-
-      if (confirmado) {
-        estadoPagoEl.innerHTML = `<strong>Estado pago:</strong> <span style="color: green;">✅ Pago confirmado por el administrador.</span>`;
+      const filaPago = filas.find(f => f.DNI === dni);
+      if (filaPago) {
+        const confirmado = filaPago['D'] === 'TRUE' || filaPago['D'] === 'true' || filaPago['D'] === 'VERDADERO' || filaPago['D'] === 'verdadero';
+        if (confirmado) {
+          estadoPago.textContent = '✅ Pago confirmado por el administrador.';
+          estadoPago.classList.add('confirmado');
+        } else {
+          estadoPago.textContent = '❌ Pago pendiente de confirmación.';
+          estadoPago.classList.add('no-confirmado');
+        }
       } else {
-        estadoPagoEl.innerHTML = `<strong>Estado pago:</strong> <span style="color: #d35400;">⏳ Pago pendiente de confirmación. Recibimos tu comprobante, en menos de 24hs se verá reflejado en la app.</span>`;
+        estadoPago.textContent = '❌ No se encontró registro de pago.';
+        estadoPago.classList.add('no-confirmado');
       }
     } catch (error) {
-      console.error('Error cargando estado de pago:', error);
-      document.getElementById('estadoPago').innerHTML = `<strong>Estado pago:</strong> <span style="color: red;">No se pudo obtener el estado de pago.</span>`;
+      estadoPago.textContent = '❌ Error al cargar estado de pago.';
+      estadoPago.classList.add('no-confirmado');
+      console.error(error);
     }
   }
 
@@ -221,14 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const encoded = encodeURIComponent(ejercicio);
             html += 
               `<li style="margin-bottom: 1rem;">
-                <span>${ejercicio}</span>
-                <a href="https://www.google.com/search?q=${encoded}" target="_blank" title="Buscar en Google" style="margin-left: 10px;">
-                  🔍
-                </a>
+                <button style="background: #FFA500; color: black; border: none; border-radius: 20px; padding: 0.5rem 1rem; cursor: pointer;" 
+                  onclick="window.open('https://www.google.com/search?q=${encoded}', '_blank')">${ejercicio}</button>
               </li>`;
           });
 
-          html += '</ul><hr style="border-color: #ccc;">';
+          html += '</ul><hr style="border: 1px solid #FFA500; margin-bottom: 1rem;">';
         });
 
         contenedorEntrenamientos.innerHTML = html;
@@ -240,199 +221,175 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   btnVolverPerfil.addEventListener('click', () => {
-    pantallaEntrenamientos.classList.add('hidden');
-    perfil.classList.remove('hidden');
+    pantallaEntrenamientos.style.opacity = 0;
+    setTimeout(() => {
+      pantallaEntrenamientos.classList.add('hidden');
+      perfil.classList.remove('hidden');
+      perfil.style.opacity = 1;
+    }, 500);
   });
 
-  // Mostrar historial en carreras
+  // Historial carreras
   btnHistorial.addEventListener('click', () => {
     perfil.classList.add('hidden');
     pantallaHistorial.classList.remove('hidden');
+    pantallaHistorial.style.opacity = 0;
+    setTimeout(() => pantallaHistorial.style.opacity = 1, 50);
     cargarHistorial();
   });
 
   btnVolverPerfil2.addEventListener('click', () => {
-    pantallaHistorial.classList.add('hidden');
-    perfil.classList.remove('hidden');
+    pantallaHistorial.style.opacity = 0;
+    setTimeout(() => {
+      pantallaHistorial.classList.add('hidden');
+      perfil.classList.remove('hidden');
+      perfil.style.opacity = 1;
+    }, 500);
   });
 
-  // Formateo del input tiempo mientras se escribe
-  tiempoInput.addEventListener('input', (e) => {
-    let val = e.target.value.replace(/[^0-9]/g, '');
-    if (val.length > 6) val = val.slice(0, 6);
-
-    if (val.length <= 2) {
-      val = val;
-    } else if (val.length <= 4) {
-      val = val.slice(0, val.length - 2) + ':' + val.slice(val.length - 2);
-    } else {
-      val = val.slice(0, 2) + ':' + val.slice(2, 4) + ':' + val.slice(4);
-    }
-
-    e.target.value = val;
-  });
-
-  // Enviar nuevo historial carrera al Web App y actualizar tabla
-  formCarrera.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
+  formCarrera.addEventListener('submit', async () => {
+    const dni = perfil.getAttribute('data-dni');
     const evento = document.getElementById('eventoInput').value.trim();
     const distancia = parseFloat(document.getElementById('distanciaInput').value);
     const tiempo = document.getElementById('tiempoInput').value.trim();
-    const dni = perfil.getAttribute('data-dni');
 
-    if (!dni) {
-      alert('❌ Debes iniciar sesión primero.');
-      return;
-    }
     if (!evento || !distancia || !tiempo) {
-      alert('❌ Completa todos los campos.');
+      alert('Por favor, completá todos los campos.');
       return;
     }
+
+    if (!validarTiempo(tiempo)) {
+      alert('El tiempo debe tener formato 00:00:00');
+      return;
+    }
+
+    const ritmo = calcularRitmo(distancia, tiempo);
+
+    // Guardar por WebApp Apps Script
+    const url = urlWebAppHistorial + `?dni=${dni}&evento=${encodeURIComponent(evento)}&distancia=${distancia}&tiempo=${tiempo}&ritmo=${ritmo}`;
 
     try {
-      const respuesta = await fetch(urlWebAppHistorial, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dni, evento, distancia, tiempo })
-      });
-
-      const data = await respuesta.json();
-
-      if (data.status === 'ok') {
-        sonidoConfirmacion.play();
-        alert('✅ Carrera registrada correctamente.');
-        formCarrera.reset();
+      const res = await fetch(url);
+      const json = await res.json();
+      if (json.success) {
+        alert('Carrera registrada correctamente');
         cargarHistorial();
-        mostrarNotificacion(`Carrera registrada`, `Evento: ${evento} - ${distancia} km - ${tiempo}`);
+        formCarrera.reset();
       } else {
-        alert('❌ Error: ' + data.message);
+        alert('Error al registrar carrera');
       }
-    } catch (error) {
-      alert('❌ Error de conexión, revisá la URL del Web App y permisos.');
-      console.error(error);
+    } catch {
+      alert('Error al registrar carrera');
     }
   });
 
-  // Función para cargar historial desde CSV y mostrar en tabla
+  function validarTiempo(t) {
+    return /^\d{2}:\d{2}:\d{2}$/.test(t);
+  }
+
+  function calcularRitmo(dist, tiempo) {
+    const partes = tiempo.split(':').map(Number);
+    const totalSeg = partes[0] * 3600 + partes[1] * 60 + partes[2];
+    const ritmoSeg = totalSeg / dist;
+    const min = Math.floor(ritmoSeg / 60);
+    const seg = Math.round(ritmoSeg % 60);
+    return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
+  }
+
   async function cargarHistorial() {
-    tablaCarreras.innerHTML = '<p>Cargando historial...</p>';
+    const dni = perfil.getAttribute('data-dni');
+    tablaCarreras.innerHTML = 'Cargando historial...';
     try {
       const res = await fetch(csvHistorialPublico);
       const csvText = await res.text();
+      const datos = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+      const filas = datos.data.filter(fila => fila.DNI === dni);
 
-      const resultados = Papa.parse(csvText, { header: true, skipEmptyLines: true });
-      const filas = resultados.data;
-
-      if (!filas.length) {
-        tablaCarreras.innerHTML = '<p>No hay registros de carreras.</p>';
+      if (filas.length === 0) {
+        tablaCarreras.innerHTML = '<p>No hay carreras registradas.</p>';
         return;
       }
 
-      // Filtrar por DNI actual para mostrar solo sus registros
-      const dniActual = perfil.getAttribute('data-dni');
-      const filasFiltradas = filas.filter(f => f.DNI === dniActual);
-
-      if (!filasFiltradas.length) {
-        tablaCarreras.innerHTML = '<p>No hay registros para este atleta.</p>';
-        return;
-      }
-
-      // Construir tabla
-      let html = 
-        `<table class="tabla-historial" style="width:100%; border-collapse: collapse; text-align:left;">
-          <thead>
-            <tr style="background:#FFA500; color:black;">
-              <th style="padding: 8px; border:1px solid #ddd;">Evento</th>
-              <th style="padding: 8px; border:1px solid #ddd;">Distancia (km)</th>
-              <th style="padding: 8px; border:1px solid #ddd;">Tiempo</th>
-              <th style="padding: 8px; border:1px solid #ddd;">Fecha Registro</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      filasFiltradas.forEach(fila => {
-        html += 
-          `<tr>
-            <td style="padding: 8px; border:1px solid #ddd;">${fila.Evento}</td>
-            <td style="padding: 8px; border:1px solid #ddd;">${fila.Distancia}</td>
-            <td style="padding: 8px; border:1px solid #ddd;">${fila.Tiempo}</td>
-            <td style="padding: 8px; border:1px solid #ddd;">${fila.FechaRegistro}</td>
-          </tr>`;
+      let tablaHTML = `<table class="tabla-historial"><thead><tr><th>Evento</th><th>Distancia (km)</th><th>Tiempo</th><th>Ritmo (min/km)</th></tr></thead><tbody>`;
+      filas.forEach(fila => {
+        tablaHTML += `<tr>
+          <td>${fila.Evento}</td>
+          <td>${fila.Distancia}</td>
+          <td>${fila.Tiempo}</td>
+          <td>${fila.Ritmo}</td>
+        </tr>`;
       });
-
-      html += '</tbody></table>';
-
-      tablaCarreras.innerHTML = html;
+      tablaHTML += '</tbody></table>';
+      tablaCarreras.innerHTML = tablaHTML;
     } catch (error) {
       tablaCarreras.innerHTML = '<p>Error al cargar historial.</p>';
       console.error(error);
     }
   }
 
-  // Modal pago de cuota: Abrir y cerrar
+  // Modal Pago de Cuota
   btnPagoCuota.addEventListener('click', () => {
     modalPago.classList.remove('hidden');
+    modalPago.style.opacity = 0;
+    setTimeout(() => modalPago.style.opacity = 1, 50);
     mensajeComprobante.textContent = '';
-    inputComprobante.value = '';
+    btnConfirmarPago.disabled = true;
+    comprobanteInput.value = '';
   });
 
   btnCancelarPago.addEventListener('click', () => {
-    modalPago.classList.add('hidden');
-    mensajeComprobante.textContent = '';
-    inputComprobante.value = '';
+    modalPago.style.opacity = 0;
+    setTimeout(() => modalPago.classList.add('hidden'), 300);
   });
 
-  // Confirmar pago y cargar comprobante
-  btnConfirmarPago.addEventListener('click', () => {
-    const alias = inputAlias.value.trim();
-    const monto = inputMonto.value.trim();
-    const file = inputComprobante.files[0];
-    const dni = perfil.getAttribute('data-dni');
+  comprobanteInput.addEventListener('change', () => {
+    if (comprobanteInput.files.length > 0) {
+      mensajeComprobante.textContent = `Archivo listo: ${comprobanteInput.files[0].name}`;
+      btnConfirmarPago.disabled = false;
+    } else {
+      mensajeComprobante.textContent = '';
+      btnConfirmarPago.disabled = true;
+    }
+  });
 
-    if (!file) {
-      mensajeComprobante.textContent = '❌ Por favor, cargá una imagen como comprobante.';
-      mensajeComprobante.style.color = 'red';
+  btnConfirmarPago.addEventListener('click', async () => {
+    if (comprobanteInput.files.length === 0) {
+      alert('Por favor, subí un comprobante.');
       return;
     }
 
-    // Leer archivo imagen y enviar datos a servidor (simulación)
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const imagenBase64 = e.target.result;
+    const dni = perfil.getAttribute('data-dni');
+    const archivo = comprobanteInput.files[0];
+    btnConfirmarPago.disabled = true;
+    btnConfirmarPago.textContent = 'Enviando...';
 
-      // Aquí enviaríamos la info a un backend o Google Apps Script para guardar el pago y comprobante
+    // Convertir archivo a base64 para enviar (simplificado)
+    const base64File = await fileToBase64(archivo);
 
-      // Simulamos con alerta y cierre modal
-      alert('✅ Comprobante recibido. En menos de 24hs se verá reflejado en la app.');
+    // Aquí deberías implementar envío al backend o Google Apps Script para guardar el comprobante
+    // Por ejemplo, un POST a un WebApp que guarde el archivo y registre el pago en la hoja
 
-      // Guardamos localmente si querés (puedes cambiar por llamada fetch a backend real)
-      console.log('Alias:', alias, 'Monto:', monto, 'Comprobante (base64):', imagenBase64.substring(0,50) + '...');
-
-      modalPago.classList.add('hidden');
-      mensajeComprobante.textContent = '';
-      inputComprobante.value = '';
-
-      // Recargar estado de pago
-      cargarEstadoPago(dni);
-    };
-
-    reader.readAsDataURL(file);
+    // Simulamos delay y mensaje
+    setTimeout(() => {
+      alert('Recibimos tu comprobante, en menos de 24hs se verá reflejado en la app.');
+      btnConfirmarPago.textContent = 'Enviar comprobante';
+      modalPago.style.opacity = 0;
+      setTimeout(() => modalPago.classList.add('hidden'), 300);
+      estadoPago.textContent = '❌ Pago pendiente de confirmación.';
+      estadoPago.classList.remove('confirmado');
+      estadoPago.classList.add('no-confirmado');
+      sonidoConfirmacion.play();
+    }, 1500);
   });
 
-  // Notificación simple en pantalla
-  function mostrarNotificacion(titulo, texto) {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'granted') {
-      new Notification(titulo, { body: texto });
-    } else if (Notification.permission !== 'denied') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          new Notification(titulo, { body: texto });
-        }
-      });
-    }
+  // Convertir archivo a base64
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
   }
 });
 
