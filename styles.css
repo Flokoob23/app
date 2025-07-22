@@ -1,193 +1,408 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;600&display=swap');
+/* Reset básico y fuentes */
+* {
+  box-sizing: border-box;
+}
 
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    margin: 0;
-    padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background-color: #fff;
+  color: #222;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.5;
 }
 
-header {
-    background-color: #fff;
-    padding: 1rem;
-    text-align: center;
-    border-bottom: 1px solid #e0e0e0;
+/* Modo oscuro */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
 }
 
-h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    margin: 0;
-    color: #d63384;
-}
-
-button {
-    background-color: #d63384;
-    color: white;
-    padding: 0.5rem 1rem;
-    margin: 0.5rem;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #b82a6e;
-}
-
-input[type="text"],
-input[type="file"] {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.4rem;
-    width: 100%;
-    margin-bottom: 1rem;
-}
-
-.album-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 1rem;
-    padding: 1rem;
-    margin: 1rem;
-    background-color: #fff;
-    transition: box-shadow 0.2s ease;
-}
-
-.album-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.photo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 1rem;
-}
-
-.photo-grid img {
-    width: 100%;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    object-fit: cover;
-    aspect-ratio: 1/1;
-    border: 2px solid transparent;
-    transition: transform 0.2s ease, border 0.2s ease;
-}
-
-.photo-grid img:hover {
-    transform: scale(1.05);
-    border-color: #d63384;
-}
-
-.selected {
-    border-color: #198754 !important;
-}
-
+/* Contenedores principales */
 .hidden {
-    display: none;
+  display: none !important;
 }
 
-/* Modal general */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
+#pantallaBienvenida, #pantallaGimnasio, #pantallaPerfil, #pantallaHistorial,
+#modalEntrenamientos, #modalPago {
+  padding: 20px;
+  max-width: 480px;
+  margin: 2rem auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.15);
+  transition: opacity 1.2s ease;
 }
 
-.modal-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 1rem;
-    width: 90%;
-    max-width: 500px;
-    text-align: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+body.dark-mode #pantallaBienvenida, 
+body.dark-mode #pantallaGimnasio, 
+body.dark-mode #pantallaPerfil, 
+body.dark-mode #pantallaHistorial,
+body.dark-mode #modalEntrenamientos, 
+body.dark-mode #modalPago {
+  background-color: #1e1e1e;
+  box-shadow: 0 2px 15px rgba(255,255,255,0.1);
 }
 
-/* Alias y copia */
-.alias-box {
-    background-color: #f8f9fa;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px dashed #ced4da;
-    margin-top: 1rem;
-    position: relative;
+/* Botones generales */
+button, input[type="submit"] {
+  background-color: #ff7f00;
+  border: none;
+  color: white;
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
 }
 
-.alias-box code {
-    font-size: 1.2rem;
-    color: #d63384;
-    font-weight: bold;
+button:hover, input[type="submit"]:hover {
+  background-color: #e67300;
 }
 
-.copy-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background-color: #6f42c1;
-    color: white;
-    padding: 0.3rem 0.6rem;
-    border-radius: 0.3rem;
-    font-size: 0.8rem;
-    cursor: pointer;
-    border: none;
+button:disabled, input[type="submit"]:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
 }
 
-.copy-btn:hover {
-    background-color: #5936a2;
+/* Inputs y formularios */
+input[type="text"], input[type="password"], input[type="number"], input[type="file"], select {
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  margin: 0.4rem 0 1rem 0;
+  border: 1.8px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background-color: #fefefe;
 }
 
-/* Confirmación de pago */
-#confirmStatus {
-    margin-top: 1rem;
-    font-weight: bold;
-    font-size: 1rem;
+input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="file"]:focus, select:focus {
+  border-color: #ff7f00;
+  outline: none;
 }
 
-.status-success {
-    color: #198754;
+body.dark-mode input[type="text"], 
+body.dark-mode input[type="password"], 
+body.dark-mode input[type="number"], 
+body.dark-mode input[type="file"], 
+body.dark-mode select {
+  background-color: #2a2a2a;
+  border-color: #666;
+  color: #ddd;
 }
 
-.status-error {
-    color: #dc3545;
+body.dark-mode input[type="text"]:focus, 
+body.dark-mode input[type="password"]:focus, 
+body.dark-mode input[type="number"]:focus, 
+body.dark-mode input[type="file"]:focus, 
+body.dark-mode select:focus {
+  border-color: #ffa500;
 }
 
-.status-loading {
-    color: #ffc107;
+/* Títulos */
+h1, h2, h3 {
+  margin-top: 0;
+  font-weight: 700;
+  color: #ff7f00;
 }
 
-/* Botón de envío de comprobante */
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3 {
+  color: #ffa500;
+}
+
+/* Imagen perfil */
+#fotoAtleta {
+  display: block;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 1rem auto;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ff7f00;
+  transition: border-color 0.3s ease;
+}
+
+body.dark-mode #fotoAtleta {
+  border-color: #ffa500;
+}
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #ff7f00;
+  color: white;
+  font-weight: 700;
+}
+
+body.dark-mode th {
+  background-color: #ffa500;
+  color: #222;
+}
+
+tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+body.dark-mode tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+/* Listas de entrenamientos */
+#listaEntrenamientos p {
+  margin: 0.5rem 0 0.3rem 0;
+}
+
+#listaEntrenamientos ul {
+  padding-left: 1.2rem;
+}
+
+#listaEntrenamientos li {
+  margin-bottom: 0.7rem;
+  font-size: 1rem;
+}
+
+/* Enlaces íconos */
+#listaEntrenamientos a {
+  color: #ff7f00;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+#listaEntrenamientos a:hover {
+  text-decoration: underline;
+}
+
+/* Botón modo oscuro */
+#toggleModo {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  font-size: 1.6rem;
+  background: #ff7f00;
+  border-radius: 50%;
+  padding: 0.4rem 0.55rem;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255,127,0,0.7);
+  user-select: none;
+  transition: background-color 0.3s ease;
+  z-index: 1000;
+}
+
+#toggleModo:hover {
+  background-color: #e67300;
+}
+
+/* Modal pago mejoras */
+
+#modalPago {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  max-width: 400px;
+  width: 90%;
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  transform: translate(-50%, -50%);
+  z-index: 1100;
+  display: none;
+  flex-direction: column;
+  outline: none;
+}
+
+body.dark-mode #modalPago {
+  background-color: #222;
+  box-shadow: 0 0 15px rgba(255, 165, 0, 0.5);
+}
+
+#modalPago.hidden {
+  display: none !important;
+}
+
+#modalPagoTitulo {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: #ff7f00;
+}
+
+body.dark-mode #modalPagoTitulo {
+  color: #ffa500;
+}
+
+#modalPagoTitulo.confirmado {
+  color: #28a745; /* verde confirmación */
+}
+
+#modalPagoMensaje {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+#modalPagoMensaje.confirmado {
+  color: #28a745;
+}
+
+/* Alias MercadoPago */
+#aliasMP {
+  font-weight: 700;
+  font-size: 1.4rem;
+  background-color: #ffefcc;
+  color: #cc8400;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1rem;
+  user-select: all;
+  letter-spacing: 1.2px;
+}
+
+body.dark-mode #aliasMP {
+  background-color: #4a3d00;
+  color: #ffcf33;
+}
+
+/* Botón copiar alias */
+#btnCopiarAlias {
+  background-color: #ffa500;
+  color: #222;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+#btnCopiarAlias:hover {
+  background-color: #cc8400;
+}
+
+/* Input para comprobante */
+#comprobanteInput {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+/* Botón enviar comprobante */
 #sendProofBtn {
-    margin-top: 1rem;
-    background-color: #198754;
+  width: 100%;
+  padding: 0.7rem 0;
+  font-weight: 700;
+  background-color: #28a745;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
 }
 
-#sendProofBtn:hover {
-    background-color: #146c43;
+#sendProofBtn:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
 }
 
-/* Responsive mejoras */
-@media (max-width: 600px) {
-    .modal-content {
-        padding: 1rem;
-    }
-
-    .alias-box {
-        font-size: 0.9rem;
-    }
-
-    .copy-btn {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.5rem;
-    }
+#sendProofBtn:hover:not(:disabled) {
+  background-color: #218838;
 }
+
+/* Estado de confirmación */
+#confirmStatus {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  min-height: 1.5rem;
+  color: #333;
+}
+
+body.dark-mode #confirmStatus {
+  color: #ccc;
+}
+
+/* Botones modal (confirmar, cancelar) */
+#btnConfirmarPago, #btnCancelarPago {
+  width: 48%;
+  margin: 0 1% 0 1%;
+  padding: 0.7rem 0;
+  font-weight: 700;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+#btnConfirmarPago {
+  background-color: #ff7f00;
+  color: white;
+}
+
+#btnConfirmarPago:hover:not(:disabled) {
+  background-color: #e67300;
+}
+
+#btnCancelarPago {
+  background-color: #bbb;
+  color: #222;
+}
+
+#btnCancelarPago:hover {
+  background-color: #999;
+}
+
+#btnCancelarPago:disabled {
+  cursor: not-allowed;
+  background-color: #ddd;
+}
+
+/* Contenedor botones modal */
+.modal-btns {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  #pantallaBienvenida, #pantallaGimnasio, #pantallaPerfil, #pantallaHistorial,
+  #modalEntrenamientos, #modalPago {
+    margin: 1rem 1rem 2rem 1rem;
+    padding: 15px 20px;
+  }
+
+  #fotoAtleta {
+    width: 120px;
+    height: 120px;
+  }
+
+  button, input[type="submit"], #sendProofBtn, #btnCopiarAlias {
+    font-size: 0.9rem;
+    padding: 0.55rem 1rem;
+  }
+}
+
 
