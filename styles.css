@@ -1,336 +1,193 @@
-/* Reset y fuentes */
-body, html {
-  margin: 0; padding: 0; height: 100%;
-  font-family: 'Poppins', sans-serif;
-  background: black;
-  color: #FFD600;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  transition: background-color 0.3s ease, color 0.3s ease;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;600&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
 }
 
-/* Pantallas */
-.pantalla {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 1;
-  transition: opacity 1.2s ease;
+header {
+    background-color: #fff;
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin: 0;
+    color: #d63384;
+}
+
+button {
+    background-color: #d63384;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #b82a6e;
+}
+
+input[type="text"],
+input[type="file"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.4rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.album-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin: 1rem;
+    background-color: #fff;
+    transition: box-shadow 0.2s ease;
+}
+
+.album-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.photo-grid img {
+    width: 100%;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    object-fit: cover;
+    aspect-ratio: 1/1;
+    border: 2px solid transparent;
+    transition: transform 0.2s ease, border 0.2s ease;
+}
+
+.photo-grid img:hover {
+    transform: scale(1.05);
+    border-color: #d63384;
+}
+
+.selected {
+    border-color: #198754 !important;
 }
 
 .hidden {
-  display: none !important;
-  opacity: 0;
+    display: none;
 }
 
-/* Modo oscuro */
-.dark-mode {
-  background-color: #121212;
-  color: #FFD600;
+/* Modal general */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
 }
 
-.dark-mode .pantallaPerfil {
-  background-color: #222;
-  color: #FFD600;
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-.dark-mode #modalEntrenamientos {
-  background: #222;
-  color: #FFD600;
+/* Alias y copia */
+.alias-box {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px dashed #ced4da;
+    margin-top: 1rem;
+    position: relative;
 }
 
-/* Modo claro */
-.modo-claro {
-  background-color: white;
-  color: black;
+.alias-box code {
+    font-size: 1.2rem;
+    color: #d63384;
+    font-weight: bold;
 }
 
-.modo-claro .pantallaPerfil,
-.modo-claro #modalEntrenamientos {
-  background: #f9f9f9;
-  color: black;
+.copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: #6f42c1;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.3rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: none;
 }
 
-.modo-claro #pantallaGimnasio {
-  background-color: #ffecd2;
-  color: black;
+.copy-btn:hover {
+    background-color: #5936a2;
 }
 
-.modo-claro .btn-iniciar,
-.modo-claro .form-login button {
-  background-color: #333;
-  color: #FFA500;
+/* Confirmación de pago */
+#confirmStatus {
+    margin-top: 1rem;
+    font-weight: bold;
+    font-size: 1rem;
 }
 
-.modo-claro .btn-iniciar:hover,
-.modo-claro .form-login button:hover {
-  background-color: #555;
+.status-success {
+    color: #198754;
 }
 
-.modo-claro #toggleModo {
-  background-color: #333;
-  color: #FFD600;
-  border-color: #FFD600;
+.status-error {
+    color: #dc3545;
 }
 
-.modo-claro #toggleModo:hover {
-  background-color: #FFD600;
-  color: black;
+.status-loading {
+    color: #ffc107;
 }
 
-/* Botón toggle modo */
-#toggleModo {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  background: transparent;
-  border: 2px solid #FFD600;
-  color: #FFD600;
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: 700;
-  user-select: none;
-  z-index: 9999;
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* Botón de envío de comprobante */
+#sendProofBtn {
+    margin-top: 1rem;
+    background-color: #198754;
 }
 
-#toggleModo:hover {
-  background-color: #FFD600;
-  color: black;
+#sendProofBtn:hover {
+    background-color: #146c43;
 }
 
-/* Pantalla 1 - Bienvenida */
-.bienvenida-contenedor {
-  text-align: center;
+/* Responsive mejoras */
+@media (max-width: 600px) {
+    .modal-content {
+        padding: 1rem;
+    }
+
+    .alias-box {
+        font-size: 0.9rem;
+    }
+
+    .copy-btn {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
 }
 
-.bienvenida-contenedor h1 {
-  font-size: 3.2rem;
-  margin: 0;
-  line-height: 1;
-}
-
-.subtitulo-flokoob {
-  font-size: 1rem;
-  color: #FFD600;
-  margin-top: 0.3rem;
-  margin-bottom: 1.5rem;
-  letter-spacing: 1px;
-  font-weight: 400;
-}
-
-.logo-flokoob {
-  width: 120px;
-  filter: brightness(1) saturate(5);
-}
-
-/* Pantalla 2 - Gimnasio */
-#pantallaGimnasio {
-  background-color: #FFA500;
-  color: black;
-  flex-direction: column;
-  text-align: center;
-  padding: 2rem;
-}
-
-.gimnasio-contenedor {
-  max-width: 400px;
-  width: 90%;
-}
-
-.gimnasio-titulo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.icon-corredor {
-  width: 50px;
-  height: 50px;
-}
-
-.gimnasio-titulo h2 {
-  font-size: 2rem;
-  margin: 0;
-  font-weight: 700;
-  user-select: none;
-}
-
-.btn-iniciar {
-  background-color: black;
-  color: #FFA500;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border-radius: 40px;
-  cursor: pointer;
-  width: 100%;
-  margin-bottom: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.btn-iniciar:hover {
-  background-color: #333;
-}
-
-.form-login {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-login input {
-  padding: 0.9rem 1rem;
-  font-size: 1.1rem;
-  border-radius: 25px;
-  border: 2px solid black;
-  outline: none;
-}
-
-.form-login input:focus {
-  border-color: #333;
-}
-
-.form-login button {
-  background-color: black;
-  color: #FFA500;
-  border: none;
-  padding: 1rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.form-login button:hover {
-  background-color: #333;
-}
-
-/* Pantalla 3 - Perfil */
-.pantallaPerfil {
-  background: white;
-  color: #333;
-  flex-direction: column;
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-.perfil-contenedor {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.foto-perfil {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  flex-shrink: 0;
-}
-
-.info-atleta {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-#nombreAtleta {
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: #222;
-  margin: 0;
-  user-select: none;
-}
-
-/* Botones perfil */
-.botones-perfil {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.botones-perfil button {
-  flex: 1 1 150px;
-  padding: 0.9rem 0;
-  background-color: #3776BC;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  user-select: none;
-}
-
-.botones-perfil button:hover,
-.botones-perfil button:focus {
-  background-color: #2a5390;
-  outline: none;
-}
-
-/* Entrenamientos & historial */
-#gimnasio-contenedor ul {
-  list-style: none;
-  padding: 0;
-}
-
-#gimnasio-contenedor ul li {
-  margin-bottom: 1rem;
-}
-
-/* Tabla historial carreras */
-.tabla-historial {
-  margin-top: 1rem;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.tabla-historial th,
-.tabla-historial td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.tabla-historial th {
-  background-color: #FFA500;
-  color: black;
-  text-align: left;
-}
-
-/* Pantalla modal entrenamientos */
-#modalEntrenamientos {
-  background: white;
-  color: #333;
-  flex-direction: column;
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 1rem;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-  overflow-y: auto;
-}
-
-/* Modal Pago de Cuota */
-#modalPago {
-  display: none; /* hidden by default */
-}
-
-#modalPago:not(.hidden) {
-  display: flex;
-}
