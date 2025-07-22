@@ -11,9 +11,7 @@
 <body>
 
   <!-- Botón Modo Oscuro/Claro -->
-  <button id="toggleModo" aria-label="Cambiar modo oscuro/claro" style="position:fixed; top:1rem; right:1rem; z-index:1000; background:#FFD600; color:black; border:none; padding:0.5rem 1rem; border-radius:20px; font-weight:bold; cursor:pointer;">
-    🌙 Oscuro
-  </button>
+  <button id="toggleModo" aria-label="Cambiar modo oscuro/claro"></button>
 
   <!-- Pantalla 1: Bienvenida -->
   <div id="pantallaBienvenida" class="pantalla">
@@ -51,13 +49,13 @@
       <img id="fotoAtleta" class="foto-perfil" src="" alt="Foto del Atleta" />
       <div class="info-atleta">
         <h2 id="nombreAtleta"></h2>
-        <div id="estadoPago"></div>
         <div class="botones-perfil">
           <button id="btnEntrenamientos">📋 ENTRENAMIENTOS</button>
           <button>📝 REGISTROS</button>
           <button id="btnHistorial">🏁 HISTORIAL EN CARRERAS</button>
           <button id="btnPagoCuota">💳 PAGO DE CUOTA</button>
         </div>
+        <div id="estadoPago"></div>
       </div>
     </div>
   </div>
@@ -107,27 +105,22 @@
   </div>
 
   <!-- Modal Pago de Cuota -->
-  <div id="modalPago" class="pantalla hidden" tabindex="-1" aria-modal="true" role="dialog" aria-labelledby="modalPagoTitulo" aria-describedby="modalPagoMensaje">
+  <div id="modalPago" class="pantalla hidden" tabindex="-1" aria-modal="true" role="dialog">
     <div class="contenido">
-      <h2 id="modalPagoTitulo">Confirmar pago</h2>
-      <p id="modalPagoMensaje">Por favor, cargá tu comprobante para el pago de la cuota de <strong>$20.000</strong> al alias <code>desa2025</code>.</p>
-
-      <label for="inputAlias">Alias de MercadoPago</label>
-      <input type="text" id="inputAlias" value="desa2025" readonly />
-
-      <label for="inputMonto">Monto a pagar ($)</label>
-      <input type="text" id="inputMonto" value="20000" readonly />
-
-      <label for="inputComprobante">Carga tu comprobante (imagen)</label>
-      <input type="file" id="inputComprobante" accept="image/*" />
-
+      <h2>Pago de Cuota</h2>
+      <p><strong>Alias para transferencia:</strong> <span id="aliasPago">desa2025</span></p>
+      <p><strong>Monto:</strong> $20.000</p>
+      <label for="comprobanteInput">Subí tu comprobante (imagen o PDF):</label>
+      <input type="file" id="comprobanteInput" accept="image/*,application/pdf" />
       <div id="mensajeComprobante"></div>
-
-      <button id="btnConfirmarPago">Enviar comprobante</button>
-      <button id="btnCancelarPago">Cancelar</button>
+      <div style="margin-top: 1rem;">
+        <button id="btnConfirmarPago" disabled>Enviar comprobante</button>
+        <button id="btnCancelarPago">Cancelar</button>
+      </div>
     </div>
   </div>
 
   <script src="app.js"></script>
 </body>
 </html>
+
