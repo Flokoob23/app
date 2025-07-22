@@ -125,7 +125,7 @@ body, html {
 }
 
 .logo-flokoob {
-  width: 120px;
+  width: 140px;
   filter: brightness(1) saturate(5);
   margin-top: 1rem;
 }
@@ -258,14 +258,6 @@ body, html {
   user-select: none;
 }
 
-/* Estado pago */
-#estadoPago {
-  font-weight: 700;
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  color: #333;
-}
-
 /* Botones perfil */
 .botones-perfil {
   display: flex;
@@ -338,29 +330,23 @@ body, html {
 /* Modal Pago de Cuota */
 #modalPago {
   display: none; /* hidden by default */
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  background: rgba(0,0,0,0.6); 
-  width: 100vw; 
-  height: 100vh; 
-  justify-content: center; 
-  align-items: center; 
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
   z-index: 10000;
 }
 
-#modalPago:not(.hidden) {
-  display: flex;
-}
-
 #modalPago .contenido {
-  background: white; 
-  color: black; 
-  padding: 2rem; 
-  border-radius: 15px; 
-  max-width: 450px; 
-  width: 90%; 
-  text-align: center; 
+  background: white;
+  color: black;
+  padding: 2rem;
+  border-radius: 15px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
   box-shadow: 0 0 10px #000;
 }
 
@@ -369,34 +355,27 @@ body, html {
 }
 
 #modalPago p {
-  margin-bottom: 1.5rem;
-  font-size: 1.1rem;
-}
-
-#modalPago label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-weight: 600;
-  text-align: left;
+  margin-bottom: 2rem;
 }
 
 #modalPago input[type="text"],
+#modalPago input[type="number"],
 #modalPago input[type="file"] {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.8rem 1rem;
   margin-bottom: 1rem;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 1rem;
 }
 
 #modalPago button {
-  padding: 0.8rem 1.5rem;
+  padding: 0.9rem 1.5rem;
   font-weight: 600;
   cursor: pointer;
-  margin: 0.3rem;
-  border-radius: 8px;
   border: none;
+  border-radius: 30px;
+  margin: 0 0.5rem;
   transition: background-color 0.3s ease;
 }
 
@@ -411,7 +390,6 @@ body, html {
 
 #btnCancelarPago {
   background-color: #ccc;
-  color: #333;
 }
 
 #btnCancelarPago:hover {
@@ -419,8 +397,24 @@ body, html {
 }
 
 #mensajeComprobante {
-  font-style: italic;
-  color: #555;
+  margin-top: -0.8rem;
   margin-bottom: 1rem;
+  font-weight: 600;
+  min-height: 1.5rem;
+}
+
+/* Estado pago confirmado */
+#estadoPago {
+  margin-top: 1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.confirmado {
+  color: green;
+}
+
+.no-confirmado {
+  color: red;
 }
 
