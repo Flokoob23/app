@@ -105,17 +105,25 @@
     </div>
   </div>
 
-  <!-- Modal Pago de Cuota -->
-  <div id="modalPago" class="pantalla hidden" style="position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.6); width: 100vw; height: 100vh; justify-content: center; align-items: center; z-index: 10000;">
-    <div style="background: white; color: black; padding: 2rem; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 0 10px #000;">
+  <!-- Modal Pago de Cuota Mejorado -->
+  <div id="modalPago" class="pantalla hidden" role="dialog" aria-modal="true" aria-labelledby="modalPagoTitulo" aria-describedby="modalPagoMensaje" style="position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.6); width: 100vw; height: 100vh; justify-content: center; align-items: center; z-index: 10000;">
+    <div class="modal-content">
       <h2 id="modalPagoTitulo" style="margin-bottom: 1rem;">Confirmar pago</h2>
-      <p id="modalPagoMensaje" style="margin-bottom: 2rem;">¿Querés proceder al pago de la cuota de $15.000 por MercadoPago?</p>
-      <button id="btnConfirmarPago" style="margin-right: 1rem; padding: 0.8rem 1.5rem; font-weight: 600; cursor: pointer;">Confirmar pago</button>
-      <button id="btnCancelarPago" style="padding: 0.8rem 1.5rem; cursor: pointer;">Cancelar</button>
+      <p id="modalPagoMensaje" style="margin-bottom: 1rem;">Para abonar, transferí al alias de MercadoPago:</p>
+      <div class="alias-box">
+        <code id="aliasMP">desa2025</code>
+        <button class="copy-btn" id="btnCopiarAlias" title="Copiar alias">Copiar</button>
+      </div>
+      <p style="margin-top: 1rem;">Luego, cargá el comprobante de pago aquí:</p>
+      <input type="file" id="comprobanteInput" accept="image/*,application/pdf" />
+      <button id="sendProofBtn" disabled>Enviar comprobante</button>
+      <div id="confirmStatus" role="status" aria-live="polite"></div>
+      <button id="btnCancelarPago" style="margin-top: 1rem; padding: 0.8rem 1.5rem; cursor: pointer;">Cancelar</button>
     </div>
   </div>
 
   <script src="app.js"></script>
 </body>
 </html>
+
 
