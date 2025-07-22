@@ -2,6 +2,8 @@ const accesoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u
 const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
 
 const urlWebAppHistorial = 'https://script.google.com/macros/s/AKfycbwB58xj2evrz8VI4II9Q-SI64mexit0iFqjQhmzvUTbwfKHLbzt1ZwcGmJ7YdONja-W/exec';
+const urlWebAppPago = 'https://tu-webapp-de-pago.com/guardar-comprobante'; // <-- CAMBIAR a tu URL real
+
 const csvHistorialPublico = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1367748190&single=true&output=csv';
 
 const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
@@ -30,10 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Modal pago cuota
   const btnPagoCuota = document.getElementById('btnPagoCuota');
   const modalPago = document.getElementById('modalPago');
-  const btnConfirmarPago = document.getElementById('btnConfirmarPago');
+  const btnConfirmarPago = document.getElementById('btnConfirmarPago'); // Ya no se usa para abrir link directo
   const btnCancelarPago = document.getElementById('btnCancelarPago');
   const modalTitulo = document.getElementById('modalPagoTitulo');
   const modalMensaje = document.getElementById('modalPagoMensaje');
+  const aliasMP = document.getElementById('aliasMP');
+  const btnCopiarAlias = document.getElementById('btnCopiarAlias');
+  const comprobanteInput = document.getElementById('comprobanteInput');
+  const sendProofBtn = document.getElementById('sendProofBtn');
+  const confirmStatus = document.getElementById('confirmStatus');
 
   // Carga modo oscuro/claro guardado en localStorage
   const modoGuardado = localStorage.getItem('modo') || 'claro';
@@ -333,16 +340,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------
-  // Modal pago cuota - implementación
+  // Modal pago cuota - implementación mejorada
   // ----------------------------
 
   btnPagoCuota.addEventListener('click', () => {
     modalTitulo.textContent = 'Confirmar pago';
     modalTitulo.classList.remove('confirmado');
-    modalMensaje.textContent = '¿Querés proceder al pago de la cuota de $15.000 por MercadoPago?';
+    modalMensaje.textContent = 'Para abonar, transferí al alias de MercadoPago:';
     modalMensaje.classList.remove('confirmado');
-    btnConfirmarPago.style.display = 'inline-block';
-    btnCancelarPago.textContent = 'Cancelar';
+    aliasMP.textContent = 'desa2025';
+    sendProofBtn.disabled = true;
+    comprobanteInput.value = '';
+    confirmStatus.textContent = '';
     modalPago.classList.remove('hidden');
     modalPago.focus();
   });
@@ -351,20 +360,86 @@ document.addEventListener('DOMContentLoaded', () => {
     modalPago.classList.add('hidden');
   });
 
-  btnConfirmarPago.addEventListener('click', () => {
-    const urlPago = 'https://mpago.li/1RdecWE';
-    window.open(urlPago, '_blank');
-
-    modalTitulo.textContent = '✅ Pago confirmado';
-    modalTitulo.classList.add('confirmado');
-
-    modalMensaje.textContent = 'Tu coach se comunicará contigo en caso de error. Guarda tu comprobante.';
-    modalMensaje.classList.add('confirmado');
-
-    btnConfirmarPago.style.display = 'none';
-    btnCancelarPago.textContent = 'Cerrar';
+  // Copiar alias
+  btnCopiarAlias.addEventListener('click', () => {
+    navigator.clipboard.writeText(aliasMP.textContent).then(() => {
+      mostrarNotificacion('Alias copiado', `Se copió el alias: ${aliasMP.textContent}`);
+    }).catch(() => {
+      alert('Error al copiar alias');
+    });
   });
 
+  // Habilitar botón enviar comprobante sólo si hay archivo válido
+  comprobanteInput.addEventListener('change', () => {
+    const file = comprobanteInput.files[0];
+    if (file && (file.type.startsWith('image/') || file.type === 'application/pdf')) {
+      sendProofBtn.disabled = false;
+      confirmStatus.textContent = '';
+    } else {
+      sendProofBtn.disabled = true;
+      confirmStatus.textContent = 'Archivo inválido. Solo imagen o PDF.';
+    }
+  });
+
+  // Enviar comprobante al backend para validar pago
+  sendProofBtn.addEventListener('click', async () => {
+    const dni = perfil.getAttribute('data-dni');
+    const file = comprobanteInput.files[0];
+
+    if (!dni) {
+      alert('Debes iniciar sesión para enviar comprobante.');
+      return;
+    }
+    if (!file) {
+      alert('Seleccioná un archivo válido.');
+      return;
+    }
+
+    // Mostrar cargando
+    confirmStatus.textContent = 'Enviando comprobante...';
+    sendProofBtn.disabled = true;
+    btnCancelarPago.disabled = true;
+
+    // Crear FormData para enviar archivo y datos
+    const formData = new FormData();
+    formData.append('dni', dni);
+    formData.append('alias', aliasMP.textContent);
+    formData.append('comprobante', file);
+
+    try {
+      const response = await fetch(urlWebAppPago, {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'ok') {
+        confirmStatus.textContent = '✅ Pago confirmado. Gracias!';
+        modalTitulo.textContent = 'Pago confirmado';
+        modalTitulo.classList.add('confirmado');
+        modalMensaje.textContent = 'Tu coach validará el comprobante y se comunicará contigo.';
+        modalMensaje.classList.add('confirmado');
+        sonidoConfirmacion.play();
+        mostrarNotificacion('Pago confirmado', 'Gracias por tu pago.');
+
+        // Opcional: deshabilitar inputs después de pago
+        sendProofBtn.disabled = true;
+        comprobanteInput.disabled = true;
+      } else {
+        confirmStatus.textContent = '❌ Error: ' + (result.message || 'No se pudo confirmar el pago.');
+        sendProofBtn.disabled = false;
+        btnCancelarPago.disabled = false;
+      }
+    } catch (error) {
+      confirmStatus.textContent = '❌ Error de conexión.';
+      console.error(error);
+      sendProofBtn.disabled = false;
+      btnCancelarPago.disabled = false;
+    }
+  });
+
+  // Cerrar modal con ESC
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !modalPago.classList.contains('hidden')) {
       modalPago.classList.add('hidden');
