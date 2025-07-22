@@ -11,7 +11,7 @@
 <body>
 
   <!-- Botón Modo Oscuro/Claro -->
-  <button id="toggleModo" aria-label="Cambiar modo oscuro/claro" style="position:fixed; top:1rem; right:1rem; z-index:1000; background:#FFD600; color:black; border:none; padding:0.5rem 1rem; border-radius:20px; font-weight:bold; cursor:pointer;">
+  <button id="toggleModo" aria-label="Cambiar modo oscuro/claro" style="position:fixed; top:1rem; right:1rem; z-index:1000;">
     🌙 Oscuro
   </button>
 
@@ -19,8 +19,8 @@
   <div id="pantallaBienvenida" class="pantalla">
     <div class="bienvenida-contenedor">
       <h1>FLOKOOB</h1>
-      <p class="subtitulo-flokoob">🏃‍♂️ APP DE ENTRENAMIENTO</p>
-      <img src="https://i.imgur.com/QyPccnt.png" alt="Logo Flokoob" class="logo-flokoob" />
+      <p class="subtitulo-flokoob">APP DE ENTRENAMIENTO</p>
+      <img class="logo-flokoob" src="https://i.imgur.com/YOq1Gza.png" alt="Logo Flokoob" />
     </div>
   </div>
 
@@ -28,97 +28,69 @@
   <div id="pantallaGimnasio" class="pantalla hidden">
     <div class="gimnasio-contenedor">
       <div class="gimnasio-titulo">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon-corredor" viewBox="0 0 64 64" fill="none" stroke="black" stroke-width="3">
-          <circle cx="32" cy="12" r="8" />
-          <path d="M20 38l12-10 10 20-6 14" />
-          <path d="M44 52l8-12" />
-        </svg>
+        <img class="icon-corredor" src="https://i.imgur.com/6IWJ43U.png" alt="Icono corredor" />
         <h2>TROTADORES ELOY</h2>
       </div>
-      <button id="btnIniciarSesion" class="btn-iniciar">🔓 INICIAR SESIÓN</button>
 
-      <form id="formLogin" class="form-login hidden" onsubmit="return false;">
-        <input type="text" id="dniInput" placeholder="🪪 DNI" autocomplete="off" />
-        <input type="password" id="claveInput" placeholder="🔑 Clave" autocomplete="off" />
-        <button id="btnLogin" type="button">Ingresar</button>
+      <button id="btnIniciarSesion" class="btn-iniciar" aria-label="Iniciar sesión">Iniciar sesión</button>
+
+      <form id="formLogin" class="form-login hidden" aria-label="Formulario de inicio de sesión">
+        <input id="dniInput" type="text" placeholder="DNI" autocomplete="off" inputmode="numeric" aria-required="true" />
+        <input id="claveInput" type="password" placeholder="Clave" aria-required="true" />
+        <button id="btnLogin" type="button">Entrar</button>
       </form>
     </div>
   </div>
 
-  <!-- Pantalla 3: Perfil del Atleta -->
-  <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden">
+  <!-- Pantalla 3: Perfil -->
+  <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden" role="main" aria-live="polite" aria-label="Perfil del atleta">
     <div class="perfil-contenedor">
-      <img id="fotoAtleta" class="foto-perfil" src="" alt="Foto del Atleta" />
+      <img id="fotoAtleta" src="https://via.placeholder.com/150?text=Sin+Foto" alt="Foto del atleta" class="foto-perfil" />
       <div class="info-atleta">
-        <h2 id="nombreAtleta"></h2>
+        <h2 id="nombreAtleta">Atleta</h2>
+        <p id="estadoPago" aria-live="polite"></p>
         <div class="botones-perfil">
-          <button id="btnEntrenamientos">📋 ENTRENAMIENTOS</button>
-          <button>📝 REGISTROS</button>
-          <button id="btnHistorial">🏁 HISTORIAL EN CARRERAS</button>
-          <button id="btnPagoCuota">💳 PAGO DE CUOTA</button>
+          <button id="btnEntrenamientos" aria-label="Ver entrenamientos">🏋️‍♂️ Entrenamientos</button>
+          <button id="btnHistorial" aria-label="Ver historial en carreras">🏃 Historial</button>
+          <button id="btnPagoCuota" aria-label="Pagar cuota mensual">💰 Pagar cuota</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Pantalla 4: Entrenamientos -->
-  <div id="modalEntrenamientos" class="pantalla hidden">
-    <div class="gimnasio-contenedor">
-      <h2>📋 Entrenamientos</h2>
-      <ul id="listaEntrenamientos"></ul>
-      <button id="btnCerrarModal" class="btn-iniciar">🔙 Volver al perfil</button>
-    </div>
+  <!-- Modal Entrenamientos -->
+  <div id="modalEntrenamientos" class="pantalla hidden" role="dialog" aria-modal="true" aria-labelledby="modalEntrenamientosTitulo" tabindex="-1" style="position: fixed; top: 5%; left: 50%; transform: translateX(-50%); max-height: 90vh; overflow-y: auto; background: white; color: black; padding: 1rem; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.3); z-index: 1000; width: 90%; max-width: 600px;">
+    <h3 id="modalEntrenamientosTitulo" style="margin-top: 0;">Entrenamientos</h3>
+    <div id="listaEntrenamientos" style="margin-bottom: 1rem; max-height: 60vh; overflow-y: auto;"></div>
+    <button id="btnCerrarModal" style="background:#FFA500; border:none; padding:0.8rem 1.5rem; border-radius:25px; cursor:pointer; font-weight:700; width: 100%;">Cerrar</button>
   </div>
 
-  <!-- Pantalla 5: Historial Carreras -->
-  <div id="pantallaHistorial" class="pantalla hidden">
-    <div class="gimnasio-contenedor">
-      <h2>🏁 Historial en Carreras</h2>
-      <form id="formCarrera" class="form-login" onsubmit="return false;">
-        <input
-          type="text"
-          id="eventoInput"
-          placeholder="🏟️ Nombre del evento"
-          autocomplete="off"
-          required
-        />
-        <input
-          type="number"
-          step="0.1"
-          id="distanciaInput"
-          placeholder="📏 Distancia en km"
-          autocomplete="off"
-          required
-        />
-        <input
-          type="text"
-          id="tiempoInput"
-          placeholder="00:00:00"
-          maxlength="8"
-          autocomplete="off"
-          required
-        />
-        <button id="btnAgregarCarrera" type="submit">✅ Registrar Carrera</button>
-      </form>
-      <div id="tablaCarreras"></div>
-      <button id="btnVolverPerfil2" class="btn-iniciar">🔙 Volver al perfil</button>
-    </div>
+  <!-- Pantalla Historial -->
+  <div id="pantallaHistorial" class="pantalla pantallaPerfil hidden" role="dialog" aria-modal="true" aria-labelledby="historialTitulo" tabindex="-1" style="max-width: 800px; max-height: 80vh; overflow-y: auto; margin: 1rem auto; background: white; color: black; border-radius: 15px; padding: 1rem;">
+    <h3 id="historialTitulo" style="margin-top: 0;">Historial de Carreras</h3>
+    <table id="tablaCarreras" class="tabla-historial" aria-live="polite"></table>
+
+    <form id="formCarrera" style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;" aria-label="Formulario para agregar carrera">
+      <input id="eventoInput" type="text" placeholder="Nombre evento" required aria-required="true" style="flex: 1 1 40%;" />
+      <input id="distanciaInput" type="number" step="0.01" min="0" placeholder="Distancia km" required aria-required="true" style="flex: 1 1 20%;" />
+      <input id="tiempoInput" type="text" placeholder="HH:MM:SS" required aria-required="true" style="flex: 1 1 30%;" inputmode="numeric" pattern="^\d{1,2}(:\d{2}){1,2}$" title="Formato de tiempo HH:MM o HH:MM:SS" />
+      <button type="submit" style="flex: 1 1 100%; background:#3776BC; color:white; border:none; border-radius: 25px; padding: 0.8rem; font-weight: 700; cursor: pointer;">Agregar carrera</button>
+    </form>
+
+    <button id="btnVolverPerfil2" style="margin-top: 1rem; background:#FFA500; color:black; border:none; padding:0.8rem 1.5rem; border-radius:25px; cursor:pointer; font-weight:700; width: 100%;">Volver</button>
   </div>
 
-  <!-- Modal Pago de Cuota Mejorado -->
-  <div id="modalPago" class="pantalla hidden" role="dialog" aria-modal="true" aria-labelledby="modalPagoTitulo" aria-describedby="modalPagoMensaje" style="position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.6); width: 100vw; height: 100vh; justify-content: center; align-items: center; z-index: 10000;">
-    <div class="modal-content">
-      <h2 id="modalPagoTitulo" style="margin-bottom: 1rem;">Confirmar pago</h2>
-      <p id="modalPagoMensaje" style="margin-bottom: 1rem;">Para abonar, transferí al alias de MercadoPago:</p>
-      <div class="alias-box">
-        <code id="aliasMP">desa2025</code>
-        <button class="copy-btn" id="btnCopiarAlias" title="Copiar alias">Copiar</button>
-      </div>
-      <p style="margin-top: 1rem;">Luego, cargá el comprobante de pago aquí:</p>
-      <input type="file" id="comprobanteInput" accept="image/*,application/pdf" />
-      <button id="sendProofBtn" disabled>Enviar comprobante</button>
-      <div id="confirmStatus" role="status" aria-live="polite"></div>
-      <button id="btnCancelarPago" style="margin-top: 1rem; padding: 0.8rem 1.5rem; cursor: pointer;">Cancelar</button>
+  <!-- Modal Pago de Cuota -->
+  <div id="modalPago" class="pantalla hidden" role="dialog" aria-modal="true" aria-labelledby="modalPagoTitulo" tabindex="-1">
+    <div>
+      <h2 id="modalPagoTitulo">Pago de Cuota</h2>
+      <p><strong>Alias para transferencia:</strong> <span id="aliasPago">desa2025</span></p>
+      <p><strong>Monto:</strong> <span>$20.000</span></p>
+      <p>Subí tu comprobante de pago (imagen o PDF):</p>
+      <input type="file" id="inputComprobante" accept="image/*,.pdf" aria-label="Subir comprobante de pago" />
+      <div id="mensajeComprobante" aria-live="polite"></div>
+      <button id="btnEnviarComprobante" disabled>Enviar comprobante</button>
+      <button id="btnCerrarPago">Cancelar</button>
     </div>
   </div>
 
