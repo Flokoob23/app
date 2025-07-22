@@ -125,9 +125,8 @@ body, html {
 }
 
 .logo-flokoob {
-  width: 140px;
+  width: 120px;
   filter: brightness(1) saturate(5);
-  margin-top: 1rem;
 }
 
 /* Pantalla 2 - Gimnasio */
@@ -258,6 +257,13 @@ body, html {
   user-select: none;
 }
 
+/* Estado de pago */
+#estadoPago {
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #FFD600;
+}
+
 /* Botones perfil */
 .botones-perfil {
   display: flex;
@@ -329,92 +335,95 @@ body, html {
 
 /* Modal Pago de Cuota */
 #modalPago {
-  display: none; /* hidden by default */
   position: fixed;
   top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
+  width: 100vw;
+  height: 100vh;
   justify-content: center;
   align-items: center;
   z-index: 10000;
+  display: none;
 }
 
-#modalPago .contenido {
+#modalPago:not(.hidden) {
+  display: flex;
+}
+
+#modalPago > div {
   background: white;
   color: black;
   padding: 2rem;
   border-radius: 15px;
-  max-width: 400px;
+  max-width: 450px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 0 10px #000;
+  box-shadow: 0 0 15px #000;
 }
 
-#modalPago h2 {
+#modalPagoTitulo {
   margin-bottom: 1rem;
+}
+
+#aliasPago {
+  font-weight: 700;
 }
 
 #modalPago p {
-  margin-bottom: 2rem;
+  margin: 0.3rem 0 1rem;
 }
 
-#modalPago input[type="text"],
-#modalPago input[type="number"],
-#modalPago input[type="file"] {
+#inputComprobante {
   width: 100%;
-  padding: 0.8rem 1rem;
-  margin-bottom: 1rem;
-  border-radius: 10px;
+  padding: 0.5rem;
+  border-radius: 8px;
   border: 1px solid #ccc;
-  font-size: 1rem;
-}
-
-#modalPago button {
-  padding: 0.9rem 1.5rem;
-  font-weight: 600;
   cursor: pointer;
-  border: none;
-  border-radius: 30px;
-  margin: 0 0.5rem;
-  transition: background-color 0.3s ease;
-}
-
-#btnConfirmarPago {
-  background-color: #3776BC;
-  color: white;
-}
-
-#btnConfirmarPago:hover {
-  background-color: #2a5390;
-}
-
-#btnCancelarPago {
-  background-color: #ccc;
-}
-
-#btnCancelarPago:hover {
-  background-color: #999;
+  font-size: 1rem;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
 }
 
 #mensajeComprobante {
-  margin-top: -0.8rem;
+  font-size: 1rem;
   margin-bottom: 1rem;
   font-weight: 600;
-  min-height: 1.5rem;
-}
-
-/* Estado pago confirmado */
-#estadoPago {
-  margin-top: 1rem;
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.confirmado {
   color: green;
+  display: none;
 }
 
-.no-confirmado {
-  color: red;
+#modalPago button {
+  transition: background-color 0.3s ease;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 1rem;
+}
+
+#btnEnviarComprobante {
+  background-color: #3776BC;
+  color: white;
+  width: 100%;
+}
+
+#btnEnviarComprobante:hover:enabled {
+  background-color: #2a5390;
+}
+
+#btnEnviarComprobante:disabled {
+  background-color: #8ba4c4;
+  cursor: not-allowed;
+}
+
+#btnCerrarPago {
+  background-color: #FFA500;
+  color: black;
+  width: 100%;
+}
+
+#btnCerrarPago:hover {
+  opacity: 0.85;
 }
 
