@@ -11,9 +11,10 @@
 </head>
 <body>
 
+  <!-- Botón Modo Oscuro/Claro -->
   <button id="toggleModo" aria-label="Cambiar modo oscuro/claro">🌙 Oscuro</button>
 
-  <!-- Pantalla Bienvenida -->
+  <!-- Pantalla 1: Bienvenida -->
   <div id="pantallaBienvenida" class="pantalla">
     <div class="bienvenida-contenedor">
       <h1>FLOKOOB</h1>
@@ -22,7 +23,7 @@
     </div>
   </div>
 
-  <!-- Pantalla Gimnasio -->
+  <!-- Pantalla 2: Gimnasio -->
   <div id="pantallaGimnasio" class="pantalla hidden">
     <div class="gimnasio-contenedor">
       <div class="gimnasio-titulo">
@@ -33,14 +34,14 @@
       <button id="btnIniciarSesion" class="btn-iniciar">Iniciar sesión</button>
 
       <form id="formLogin" class="form-login hidden">
-        <input id="dniInput" type="text" placeholder="DNI" autocomplete="off" inputmode="numeric" />
+        <input id="dniInput" type="text" placeholder="DNI" autocomplete="off" />
         <input id="claveInput" type="password" placeholder="Clave" />
         <button id="btnLogin" type="button">Entrar</button>
       </form>
     </div>
   </div>
 
-  <!-- Pantalla Perfil -->
+  <!-- Pantalla 3: Perfil -->
   <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden">
     <div class="perfil-contenedor">
       <img id="fotoAtleta" src="https://via.placeholder.com/150?text=Sin+Foto" alt="Foto del atleta" class="foto-perfil" />
@@ -50,10 +51,19 @@
         <div class="botones-perfil">
           <button id="btnEntrenamientos">🏋️‍♂️ Entrenamientos</button>
           <button id="btnHistorial">🏃 Historial</button>
-          <button id="btnPagoCuota">💰 Pagar cuota</button>
           <button id="btnMapa">🗺️ Mapa</button>
+          <button id="btnPagoCuota">💰 Pagar cuota</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal Mapa -->
+  <div id="modalMapa" class="pantalla hidden" role="dialog">
+    <div id="mapaContainer">
+      <h3>Mapa de Entrenamiento</h3>
+      <div id="mapa"></div>
+      <button id="btnCerrarMapa">Cerrar</button>
     </div>
   </div>
 
@@ -64,20 +74,22 @@
     <button id="btnCerrarModal">Cerrar</button>
   </div>
 
-  <!-- Historial -->
+  <!-- Pantalla Historial -->
   <div id="pantallaHistorial" class="pantalla pantallaPerfil hidden">
     <h3>Historial de Carreras</h3>
     <table id="tablaCarreras"></table>
+
     <form id="formCarrera">
       <input id="eventoInput" type="text" placeholder="Nombre evento" required />
-      <input id="distanciaInput" type="number" step="0.01" min="0" placeholder="Distancia km" required />
+      <input id="distanciaInput" type="number" step="0.01" placeholder="Distancia km" required />
       <input id="tiempoInput" type="text" placeholder="HH:MM:SS" required />
       <button type="submit">Agregar carrera</button>
     </form>
+
     <button id="btnVolverPerfil2">Volver</button>
   </div>
 
-  <!-- Modal Pago -->
+  <!-- Modal Pago de Cuota -->
   <div id="modalPago" class="pantalla hidden">
     <div>
       <h2>Pago de Cuota</h2>
@@ -88,13 +100,6 @@
       <button id="btnEnviarComprobante" disabled>Enviar comprobante</button>
       <button id="btnCerrarPago">Cancelar</button>
     </div>
-  </div>
-
-  <!-- Pantalla Mapa -->
-  <div id="pantallaMapa" class="pantalla hidden">
-    <h3>Tu ubicación en tiempo real</h3>
-    <div id="map"></div>
-    <button id="btnCerrarMapa">Cerrar Mapa</button>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
