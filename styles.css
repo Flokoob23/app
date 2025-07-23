@@ -426,57 +426,5 @@ body, html {
 #btnCerrarPago:hover {
   opacity: 0.85;
 }
-/* Estilos adicionales para el mapa */
-#modalMapa {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.8);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-#modalMapa.hidden {
-  display: none;
-}
-
-#mapaContainer {
-  background: white;
-  color: black;
-  border-radius: 15px;
-  padding: 1rem;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#mapaContainer h3 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-}
-
-#mapa {
-  width: 100%;
-  height: 60vh;
-  margin-bottom: 1rem;
-  border-radius: 10px;
-  border: 2px solid #FFD600;
-}
-
-#btnCerrarMapa {
-  background-color: #FFA500;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 25px;
-  font-weight: 700;
-  cursor: pointer;
-  width: 100%;
-}
 
