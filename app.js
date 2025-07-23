@@ -163,19 +163,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const fecha = fila[1];
           const ejercicios = fila.slice(2).filter(e => e && e.trim() !== '');
 
-          html += `<p><strong>Fecha:</strong> ${fecha}</p>`;
+          html += <p><strong>Fecha:</strong> ${fecha}</p>;
           html += '<ul style="list-style: none; padding: 0;">';
 
           ejercicios.forEach(ejercicio => {
             const encoded = encodeURIComponent(ejercicio);
-            html += `
+            html += 
               <li style="margin-bottom: 1rem;">
                 <span>${ejercicio}</span>
                 <a href="https://www.google.com/search?q=${encoded}" target="_blank" title="Buscar en Google" style="margin-left: 10px;">
                   🔍
                 </a>
               </li>
-            `;
+            ;
           });
 
           html += '</ul><hr/>';
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Crear tabla
-        let tablaHTML = `
+        let tablaHTML = 
           <thead>
             <tr>
               <th>Evento</th>
@@ -238,18 +238,18 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>
           </thead>
           <tbody>
-        `;
+        ;
 
         data.forEach(row => {
           const ritmo = calcularRitmo(row.Tiempo, parseFloat(row.Distancia));
-          tablaHTML += `
+          tablaHTML += 
             <tr>
               <td>${row.Evento}</td>
               <td>${row.Distancia}</td>
               <td>${row.Tiempo}</td>
               <td>${ritmo}</td>
             </tr>
-          `;
+          ;
         });
 
         tablaHTML += '</tbody>';
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ritmoSeg = segundosTotales / distancia;
     const min = Math.floor(ritmoSeg / 60);
     const seg = Math.round(ritmoSeg % 60);
-    return `${min}:${seg.toString().padStart(2,'0')}`;
+    return ${min}:${seg.toString().padStart(2,'0')};
   }
 
   // Agregar carrera
@@ -366,56 +366,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2000);
   });
 });
-// ... Tu código existente ...
-
-// 👇 PEGÁ ESTO AL FINAL DEL ARCHIVO
-document.addEventListener('DOMContentLoaded', () => {
-  // MAPA
-  const btnMapa = document.getElementById('btnMapa');
-  const modalMapa = document.getElementById('modalMapa');
-  const btnCerrarMapa = document.getElementById('btnCerrarMapa');
-  let mapa;
-  let marcador;
-  let recorrido = [];
-
-  btnMapa.addEventListener('click', () => {
-    modalMapa.classList.remove('hidden');
-    modalMapa.style.opacity = 1;
-
-    if (!mapa) {
-      mapa = L.map('mapa').setView([-34.6, -58.4], 15);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(mapa);
-    }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(pos => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-
-        recorrido.push([lat, lng]);
-
-        if (!marcador) {
-          marcador = L.marker([lat, lng]).addTo(mapa);
-          mapa.setView([lat, lng], 17);
-        } else {
-          marcador.setLatLng([lat, lng]);
-        }
-
-        L.polyline(recorrido, { color: '#FFD600', weight: 5 }).addTo(mapa);
-      }, err => {
-        alert('No se pudo acceder a tu ubicación.');
-      });
-    } else {
-      alert('Tu navegador no soporta geolocalización.');
-    }
-  });
-
-  btnCerrarMapa.addEventListener('click', () => {
-    modalMapa.style.opacity = 0;
-    setTimeout(() => modalMapa.classList.add('hidden'), 500);
-  });
-});
-
 
