@@ -7,15 +7,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 
-  <!-- Botón Modo Oscuro/Claro -->
-  <button id="toggleModo" aria-label="Cambiar modo oscuro/claro" style="position:fixed; top:1rem; right:1rem; z-index:1000;">
-    🌙 Oscuro
-  </button>
+  <button id="toggleModo" aria-label="Cambiar modo oscuro/claro">🌙 Oscuro</button>
 
-  <!-- Pantalla 1: Bienvenida -->
+  <!-- Pantalla Bienvenida -->
   <div id="pantallaBienvenida" class="pantalla">
     <div class="bienvenida-contenedor">
       <h1>FLOKOOB</h1>
@@ -24,7 +22,7 @@
     </div>
   </div>
 
-  <!-- Pantalla 2: Gimnasio -->
+  <!-- Pantalla Gimnasio -->
   <div id="pantallaGimnasio" class="pantalla hidden">
     <div class="gimnasio-contenedor">
       <div class="gimnasio-titulo">
@@ -32,70 +30,77 @@
         <h2>TROTADORES ELOY</h2>
       </div>
 
-      <button id="btnIniciarSesion" class="btn-iniciar" aria-label="Iniciar sesión">Iniciar sesión</button>
+      <button id="btnIniciarSesion" class="btn-iniciar">Iniciar sesión</button>
 
-      <form id="formLogin" class="form-login hidden" aria-label="Formulario de inicio de sesión">
-        <input id="dniInput" type="text" placeholder="DNI" autocomplete="off" inputmode="numeric" aria-required="true" />
-        <input id="claveInput" type="password" placeholder="Clave" aria-required="true" />
+      <form id="formLogin" class="form-login hidden">
+        <input id="dniInput" type="text" placeholder="DNI" autocomplete="off" inputmode="numeric" />
+        <input id="claveInput" type="password" placeholder="Clave" />
         <button id="btnLogin" type="button">Entrar</button>
       </form>
     </div>
   </div>
 
-  <!-- Pantalla 3: Perfil -->
-  <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden" role="main" aria-live="polite" aria-label="Perfil del atleta">
+  <!-- Pantalla Perfil -->
+  <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden">
     <div class="perfil-contenedor">
       <img id="fotoAtleta" src="https://via.placeholder.com/150?text=Sin+Foto" alt="Foto del atleta" class="foto-perfil" />
       <div class="info-atleta">
         <h2 id="nombreAtleta">Atleta</h2>
-        <p id="estadoPago" aria-live="polite"></p>
+        <p id="estadoPago"></p>
         <div class="botones-perfil">
-          <button id="btnEntrenamientos" aria-label="Ver entrenamientos">🏋️‍♂️ Entrenamientos</button>
-          <button id="btnHistorial" aria-label="Ver historial en carreras">🏃 Historial</button>
-          <button id="btnPagoCuota" aria-label="Pagar cuota mensual">💰 Pagar cuota</button>
+          <button id="btnEntrenamientos">🏋️‍♂️ Entrenamientos</button>
+          <button id="btnHistorial">🏃 Historial</button>
+          <button id="btnPagoCuota">💰 Pagar cuota</button>
+          <button id="btnMapa">🗺️ Mapa</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal Entrenamientos -->
-  <div id="modalEntrenamientos" class="pantalla hidden" role="dialog" aria-modal="true" aria-labelledby="modalEntrenamientosTitulo" tabindex="-1" style="position: fixed; top: 5%; left: 50%; transform: translateX(-50%); max-height: 90vh; overflow-y: auto; background: white; color: black; padding: 1rem; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.3); z-index: 1000; width: 90%; max-width: 600px;">
-    <h3 id="modalEntrenamientosTitulo" style="margin-top: 0;">Entrenamientos</h3>
-    <div id="listaEntrenamientos" style="margin-bottom: 1rem; max-height: 60vh; overflow-y: auto;"></div>
-    <button id="btnCerrarModal" style="background:#FFA500; border:none; padding:0.8rem 1.5rem; border-radius:25px; cursor:pointer; font-weight:700; width: 100%;">Cerrar</button>
+  <div id="modalEntrenamientos" class="pantalla hidden">
+    <h3>Entrenamientos</h3>
+    <div id="listaEntrenamientos"></div>
+    <button id="btnCerrarModal">Cerrar</button>
   </div>
 
-  <!-- Pantalla Historial -->
-  <div id="pantallaHistorial" class="pantalla pantallaPerfil hidden" role="dialog" aria-modal="true" aria-labelledby="historialTitulo" tabindex="-1" style="max-width: 800px; max-height: 80vh; overflow-y: auto; margin: 1rem auto; background: white; color: black; border-radius: 15px; padding: 1rem;">
-    <h3 id="historialTitulo" style="margin-top: 0;">Historial de Carreras</h3>
-    <table id="tablaCarreras" class="tabla-historial" aria-live="polite"></table>
-
-    <form id="formCarrera" style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;" aria-label="Formulario para agregar carrera">
-      <input id="eventoInput" type="text" placeholder="Nombre evento" required aria-required="true" style="flex: 1 1 40%;" />
-      <input id="distanciaInput" type="number" step="0.01" min="0" placeholder="Distancia km" required aria-required="true" style="flex: 1 1 20%;" />
-      <input id="tiempoInput" type="text" placeholder="HH:MM:SS" required aria-required="true" style="flex: 1 1 30%;" inputmode="numeric" pattern="^\d{1,2}(:\d{2}){1,2}$" title="Formato de tiempo HH:MM o HH:MM:SS" />
-      <button type="submit" style="flex: 1 1 100%; background:#3776BC; color:white; border:none; border-radius: 25px; padding: 0.8rem; font-weight: 700; cursor: pointer;">Agregar carrera</button>
+  <!-- Historial -->
+  <div id="pantallaHistorial" class="pantalla pantallaPerfil hidden">
+    <h3>Historial de Carreras</h3>
+    <table id="tablaCarreras"></table>
+    <form id="formCarrera">
+      <input id="eventoInput" type="text" placeholder="Nombre evento" required />
+      <input id="distanciaInput" type="number" step="0.01" min="0" placeholder="Distancia km" required />
+      <input id="tiempoInput" type="text" placeholder="HH:MM:SS" required />
+      <button type="submit">Agregar carrera</button>
     </form>
-
-    <button id="btnVolverPerfil2" style="margin-top: 1rem; background:#FFA500; color:black; border:none; padding:0.8rem 1.5rem; border-radius:25px; cursor:pointer; font-weight:700; width: 100%;">Volver</button>
+    <button id="btnVolverPerfil2">Volver</button>
   </div>
 
-  <!-- Modal Pago de Cuota -->
-  <div id="modalPago" class="pantalla hidden" role="dialog" aria-modal="true" aria-labelledby="modalPagoTitulo" tabindex="-1">
+  <!-- Modal Pago -->
+  <div id="modalPago" class="pantalla hidden">
     <div>
-      <h2 id="modalPagoTitulo">Pago de Cuota</h2>
-      <p><strong>Alias para transferencia:</strong> <span id="aliasPago">desa2025</span></p>
-      <p><strong>Monto:</strong> <span>$20.000</span></p>
-      <p>Subí tu comprobante de pago (imagen o PDF):</p>
-      <input type="file" id="inputComprobante" accept="image/*,.pdf" aria-label="Subir comprobante de pago" />
-      <div id="mensajeComprobante" aria-live="polite"></div>
+      <h2>Pago de Cuota</h2>
+      <p><strong>Alias:</strong> desa2025</p>
+      <p><strong>Monto:</strong> $20.000</p>
+      <input type="file" id="inputComprobante" accept="image/*,.pdf" />
+      <div id="mensajeComprobante"></div>
       <button id="btnEnviarComprobante" disabled>Enviar comprobante</button>
       <button id="btnCerrarPago">Cancelar</button>
     </div>
   </div>
 
+  <!-- Pantalla Mapa -->
+  <div id="pantallaMapa" class="pantalla hidden">
+    <h3>Tu ubicación en tiempo real</h3>
+    <div id="map"></div>
+    <button id="btnCerrarMapa">Cerrar Mapa</button>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
+
 
 
