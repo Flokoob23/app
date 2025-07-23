@@ -366,5 +366,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2000);
   });
 });
+// ... Tu código existente ...
+
+// 👇 PEGÁ ESTO AL FINAL DEL ARCHIVO
+document.addEventListener('DOMContentLoaded', () => {
+  // MAPA
+  const btnMapa = document.getElementById('btnMapa');
+  const modalMapa = document.getElementById('modalMapa');
+  const btnCerrarMapa = document.getElementById('btnCerrarMapa');
+  let mapa;
+  let marcador;
+  let recorrido = [];
+
+  btnMapa.addEventListener('click', () => {
+    modalMapa.classList.remove('hidden');
+    modalMapa.style.opacity = 1;
+
+    if (!mapa) {
+      mapa = L.map('mapa').setView([-34.6, -58.4], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapa);
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        recorrido.push([lat, lng]);
+
+        if (!marcador) {
+          marcador = L.marker([lat, lng]).addTo(mapa);
+          mapa.setView([lat, lng], 17);
+        } else {
+          marcador.setLatLng([lat, lng]);
+        }
+
+        L.polyline(recorrido, { color: '#FFD600', weight: 5 }).addTo(mapa);
+      }, err => {
+        alert('No se pudo acceder a tu ubicación.');
+      });
+    } else {
+      alert('Tu navegador no soporta geolocalización.');
+    }
+  });
+
+  btnCerrarMapa.addEventListener('click', () => {
+    modalMapa.style.opacity = 0;
+    setTimeout(() => modalMapa.classList.add('hidden'), 500);
+  });
+});
 
 
