@@ -1,7 +1,6 @@
+/* Reset y fuentes */
 body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+  margin: 0; padding: 0; height: 100%;
   font-family: 'Poppins', sans-serif;
   background: black;
   color: #FFD600;
@@ -12,6 +11,7 @@ body, html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Pantallas */
 .pantalla {
   width: 100vw;
   height: 100vh;
@@ -20,7 +20,6 @@ body, html {
   align-items: center;
   opacity: 1;
   transition: opacity 1.2s ease;
-  flex-direction: column;
 }
 
 .hidden {
@@ -28,18 +27,62 @@ body, html {
   opacity: 0;
 }
 
+/* Modo oscuro */
 .dark-mode {
   background-color: #121212;
   color: #FFD600;
 }
 
-.dark-mode .pantallaPerfil,
-.dark-mode #modalEntrenamientos,
-.dark-mode #pantallaMapa {
+.dark-mode .pantallaPerfil {
   background-color: #222;
   color: #FFD600;
 }
 
+.dark-mode #modalEntrenamientos {
+  background: #222;
+  color: #FFD600;
+}
+
+/* Modo claro */
+.modo-claro {
+  background-color: white;
+  color: black;
+}
+
+.modo-claro .pantallaPerfil,
+.modo-claro #modalEntrenamientos {
+  background: #f9f9f9;
+  color: black;
+}
+
+.modo-claro #pantallaGimnasio {
+  background-color: #ffecd2;
+  color: black;
+}
+
+.modo-claro .btn-iniciar,
+.modo-claro .form-login button {
+  background-color: #333;
+  color: #FFA500;
+}
+
+.modo-claro .btn-iniciar:hover,
+.modo-claro .form-login button:hover {
+  background-color: #555;
+}
+
+.modo-claro #toggleModo {
+  background-color: #333;
+  color: #FFD600;
+  border-color: #FFD600;
+}
+
+.modo-claro #toggleModo:hover {
+  background-color: #FFD600;
+  color: black;
+}
+
+/* Botón toggle modo */
 #toggleModo {
   position: fixed;
   top: 12px;
@@ -53,6 +96,7 @@ body, html {
   font-weight: 700;
   user-select: none;
   z-index: 9999;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #toggleModo:hover {
@@ -60,52 +104,379 @@ body, html {
   color: black;
 }
 
+/* Pantalla 1 - Bienvenida */
+.bienvenida-contenedor {
+  text-align: center;
+}
+
 .bienvenida-contenedor h1 {
   font-size: 3.2rem;
+  margin: 0;
+  line-height: 1;
 }
 
 .subtitulo-flokoob {
-  margin-top: 0.5rem;
+  font-size: 1rem;
   color: #FFD600;
-  font-weight: 500;
+  margin-top: 0.3rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
+  font-weight: 400;
 }
 
 .logo-flokoob {
   width: 120px;
+  filter: brightness(1) saturate(5);
 }
 
-.btn-iniciar,
-.form-login button,
-.botones-perfil button,
-#btnCerrarModal,
-#btnVolverPerfil2,
-#btnCerrarPago,
-#btnEnviarComprobante,
-#btnMapa,
-#btnCerrarMapa {
+/* Pantalla 2 - Gimnasio */
+#pantallaGimnasio {
   background-color: #FFA500;
   color: black;
+  flex-direction: column;
+  text-align: center;
+  padding: 2rem;
+}
+
+.gimnasio-contenedor {
+  max-width: 400px;
+  width: 90%;
+}
+
+.gimnasio-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.icon-corredor {
+  width: 50px;
+  height: 50px;
+}
+
+.gimnasio-titulo h2 {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 700;
+  user-select: none;
+}
+
+.btn-iniciar {
+  background-color: black;
+  color: #FFA500;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 40px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-iniciar:hover {
+  background-color: #333;
+}
+
+.form-login {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-login input {
+  padding: 0.9rem 1rem;
+  font-size: 1.1rem;
+  border-radius: 25px;
+  border: 2px solid black;
+  outline: none;
+}
+
+.form-login input:focus {
+  border-color: #333;
+}
+
+.form-login button {
+  background-color: black;
+  color: #FFA500;
   border: none;
   padding: 1rem;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  border-radius: 25px;
+  border-radius: 30px;
   cursor: pointer;
-  margin: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.form-login button:hover {
+  background-color: #333;
+}
+
+/* Pantalla 3 - Perfil */
+.pantallaPerfil {
+  background: white;
+  color: #333;
+  flex-direction: column;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.perfil-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
 .foto-perfil {
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  flex-shrink: 0;
 }
 
-#map {
-  width: 90vw;
-  height: 80vh;
-  border: 3px solid #FFD600;
-  border-radius: 12px;
-  margin: 1rem 0;
+.info-atleta {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
+#nombreAtleta {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+  user-select: none;
+}
+
+/* Estado de pago */
+#estadoPago {
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #FFD600;
+}
+
+/* Botones perfil */
+.botones-perfil {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.botones-perfil button {
+  flex: 1 1 150px;
+  padding: 0.9rem 0;
+  background-color: #3776BC;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.botones-perfil button:hover,
+.botones-perfil button:focus {
+  background-color: #2a5390;
+  outline: none;
+}
+
+/* Entrenamientos & historial */
+#gimnasio-contenedor ul {
+  list-style: none;
+  padding: 0;
+}
+
+#gimnasio-contenedor ul li {
+  margin-bottom: 1rem;
+}
+
+/* Tabla historial carreras */
+.tabla-historial {
+  margin-top: 1rem;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.tabla-historial th,
+.tabla-historial td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.tabla-historial th {
+  background-color: #FFA500;
+  color: black;
+  text-align: left;
+}
+
+/* Pantalla modal entrenamientos */
+#modalEntrenamientos {
+  background: white;
+  color: #333;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  overflow-y: auto;
+}
+
+/* Modal Pago de Cuota */
+#modalPago {
+  position: fixed;
+  top: 0; left: 0;
+  background: rgba(0,0,0,0.7);
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  display: none;
+}
+
+#modalPago:not(.hidden) {
+  display: flex;
+}
+
+#modalPago > div {
+  background: white;
+  color: black;
+  padding: 2rem;
+  border-radius: 15px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 15px #000;
+}
+
+#modalPagoTitulo {
+  margin-bottom: 1rem;
+}
+
+#aliasPago {
+  font-weight: 700;
+}
+
+#modalPago p {
+  margin: 0.3rem 0 1rem;
+}
+
+#inputComprobante {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 1rem;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+#mensajeComprobante {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: green;
+  display: none;
+}
+
+#modalPago button {
+  transition: background-color 0.3s ease;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 1rem;
+}
+
+#btnEnviarComprobante {
+  background-color: #3776BC;
+  color: white;
+  width: 100%;
+}
+
+#btnEnviarComprobante:hover:enabled {
+  background-color: #2a5390;
+}
+
+#btnEnviarComprobante:disabled {
+  background-color: #8ba4c4;
+  cursor: not-allowed;
+}
+
+#btnCerrarPago {
+  background-color: #FFA500;
+  color: black;
+  width: 100%;
+}
+
+#btnCerrarPago:hover {
+  opacity: 0.85;
+}
+/* Estilos adicionales para el mapa */
+#modalMapa {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.8);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#modalMapa.hidden {
+  display: none;
+}
+
+#mapaContainer {
+  background: white;
+  color: black;
+  border-radius: 15px;
+  padding: 1rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#mapaContainer h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+#mapa {
+  width: 100%;
+  height: 60vh;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  border: 2px solid #FFD600;
+}
+
+#btnCerrarMapa {
+  background-color: #FFA500;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+}
 
