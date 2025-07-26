@@ -9,7 +9,6 @@ body, html {
   align-items: center;
   flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
-  overflow-x: hidden;
 }
 
 /* Pantallas */
@@ -21,71 +20,11 @@ body, html {
   align-items: center;
   opacity: 1;
   transition: opacity 1.2s ease;
-  flex-direction: column;
-  padding: 1rem;
-  box-sizing: border-box;
-  background-color: black;
-  color: #FFD600;
 }
 
 .hidden {
   display: none !important;
   opacity: 0;
-}
-
-/* Modo oscuro */
-.dark-mode {
-  background-color: #121212;
-  color: #FFD600;
-}
-
-.dark-mode .pantallaPerfil,
-.dark-mode #modalEntrenamientos,
-.dark-mode #pantallaGPS,
-.dark-mode #pantallaEntrenador {
-  background-color: #222;
-  color: #FFD600;
-}
-
-/* Modo claro */
-.modo-claro, .modo-claro .pantalla {
-  background-color: white !important;
-  color: black !important;
-}
-
-.modo-claro .pantallaPerfil,
-.modo-claro #modalEntrenamientos,
-.modo-claro #pantallaGPS,
-.modo-claro #pantallaEntrenador {
-  background: #f9f9f9;
-  color: black;
-}
-
-.modo-claro #pantallaGimnasio {
-  background-color: #ffecd2;
-  color: black;
-}
-
-.modo-claro .btn-iniciar,
-.modo-claro .form-login button {
-  background-color: #333;
-  color: #FFA500;
-}
-
-.modo-claro .btn-iniciar:hover,
-.modo-claro .form-login button:hover {
-  background-color: #555;
-}
-
-.modo-claro #toggleModo {
-  background-color: #333;
-  color: #FFD600;
-  border-color: #FFD600;
-}
-
-.modo-claro #toggleModo:hover {
-  background-color: #FFD600;
-  color: black;
 }
 
 /* Botón toggle modo */
@@ -110,7 +49,7 @@ body, html {
   color: black;
 }
 
-/* Pantalla 1 - Bienvenida */
+/* Bienvenida */
 .bienvenida-contenedor {
   text-align: center;
 }
@@ -133,21 +72,13 @@ body, html {
 .logo-flokoob {
   width: 120px;
   filter: brightness(1) saturate(5);
-  margin: 1rem auto 0;
 }
 
-/* Pantalla Gimnasio */
-#gimnasio-contenedor, .gimnasio-contenedor {
+/* Pantalla inicio */
+.gimnasio-contenedor {
   max-width: 400px;
   width: 90%;
-}
-
-#pantallaGimnasio {
-  background-color: #FFA500;
-  color: black;
-  flex-direction: column;
   text-align: center;
-  padding: 2rem 1rem;
 }
 
 .gimnasio-titulo {
@@ -188,13 +119,14 @@ body, html {
   background-color: #333;
 }
 
+/* Form login */
 .form-login {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.form-login input {
+.form-login input, .form-login select {
   padding: 0.9rem 1rem;
   font-size: 1.1rem;
   border-radius: 25px;
@@ -202,7 +134,7 @@ body, html {
   outline: none;
 }
 
-.form-login input:focus {
+.form-login input:focus, .form-login select:focus {
   border-color: #333;
 }
 
@@ -222,25 +154,22 @@ body, html {
   background-color: #333;
 }
 
-/* Pantalla perfil atleta */
+/* Perfil */
 .pantallaPerfil {
   background: white;
   color: #333;
   flex-direction: column;
-  max-width: 800px;
+  max-width: 600px;
   margin: 2rem auto;
   padding: 1rem;
   border-radius: 15px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-  width: 95%;
 }
 
 .perfil-contenedor {
   display: flex;
   align-items: center;
   gap: 2rem;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 .foto-perfil {
@@ -257,8 +186,6 @@ body, html {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  min-width: 200px;
-  max-width: 500px;
 }
 
 #nombreAtleta {
@@ -269,19 +196,15 @@ body, html {
   user-select: none;
 }
 
-/* Estado de pago */
-#estadoPago {
-  margin-top: 1rem;
+#rolUsuario {
   font-weight: 600;
-  color: #FFD600;
+  color: #555;
 }
 
-/* Botones perfil */
 .botones-perfil {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .botones-perfil button {
@@ -296,8 +219,6 @@ body, html {
   cursor: pointer;
   transition: background-color 0.3s ease;
   user-select: none;
-  min-width: 150px;
-  max-width: 180px;
 }
 
 .botones-perfil button:hover,
@@ -305,242 +226,3 @@ body, html {
   background-color: #2a5390;
   outline: none;
 }
-
-/* Entrenamientos & historial */
-#listaEntrenamientos {
-  max-width: 600px;
-  width: 90%;
-  overflow-y: auto;
-  max-height: 60vh;
-  padding: 0.5rem;
-  background: #222;
-  border-radius: 12px;
-  color: #FFD600;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-#listaEntrenamientos p {
-  margin: 0.5rem 0;
-}
-
-#listaEntrenamientos ul {
-  list-style: none;
-  padding: 0 0 0 1.2rem;
-  margin: 0 0 1rem 0;
-}
-
-#listaEntrenamientos li {
-  margin-bottom: 0.5rem;
-}
-
-/* Tabla historial carreras */
-.tabla-historial {
-  margin-top: 1rem;
-  border-collapse: collapse;
-  width: 95%;
-  max-width: 700px;
-}
-
-.tabla-historial th,
-.tabla-historial td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-.tabla-historial th {
-  background-color: #FFA500;
-  color: black;
-}
-
-/* Formulario agregar carrera */
-#formCarrera {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-#formCarrera input {
-  padding: 0.7rem 0.9rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  flex: 1 1 150px;
-  max-width: 250px;
-  box-sizing: border-box;
-}
-
-#formCarrera button {
-  padding: 0.7rem 1.2rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  background-color: #3776BC;
-  color: white;
-  border: none;
-  cursor: pointer;
-  flex: 1 1 150px;
-  max-width: 150px;
-  transition: background-color 0.3s ease;
-}
-
-#formCarrera button:hover {
-  background-color: #2a5390;
-}
-
-/* Modal pago cuota */
-#modalPago {
-  position: fixed;
-  top: 0; left: 0;
-  background: rgba(0,0,0,0.7);
-  width: 100vw;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  display: none;
-}
-
-#modalPago:not(.hidden) {
-  display: flex;
-}
-
-#modalPago > div {
-  background: white;
-  color: black;
-  padding: 2rem;
-  border-radius: 15px;
-  max-width: 450px;
-  width: 90%;
-  text-align: center;
-  box-shadow: 0 0 15px #000;
-}
-
-#modalPagoTitulo {
-  margin-bottom: 1rem;
-}
-
-#aliasPago {
-  font-weight: 700;
-}
-
-#modalPago p {
-  margin: 0.3rem 0 1rem;
-}
-
-#inputComprobante {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  font-size: 1rem;
-  box-sizing: border-box;
-  margin-bottom: 1rem;
-}
-
-#mensajeComprobante {
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
-  color: green;
-  display: none;
-}
-
-#modalPago button {
-  transition: background-color 0.3s ease;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 0.8rem 1.5rem;
-  cursor: pointer;
-  border: none;
-  margin-bottom: 1rem;
-}
-
-#btnEnviarComprobante {
-  background-color: #3776BC;
-  color: white;
-  width: 100%;
-}
-
-#btnEnviarComprobante:hover:enabled {
-  background-color: #2a5390;
-}
-
-#btnEnviarComprobante:disabled {
-  background-color: #8ba4c4;
-  cursor: not-allowed;
-}
-
-#btnCerrarPago {
-  background-color: #FFA500;
-  color: black;
-  width: 100%;
-}
-
-#btnCerrarPago:hover {
-  opacity: 0.85;
-}
-
-/* Pantalla GPS */
-#pantallaGPS {
-  flex-direction: column;
-  background-color: black;
-  color: #FFD600;
-}
-
-#mapa {
-  border-radius: 15px;
-  margin-bottom: 1rem;
-}
-
-/* Botón volver en GPS */
-#btnVolverPerfilGPS {
-  background-color: #3776BC;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 25px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#btnVolverPerfilGPS:hover {
-  background-color: #2a5390;
-}
-
-/* Zona entrenador */
-#pantallaEntrenador {
-  flex-direction: column;
-  background-color: black;
-  color: #FFD600;
-  padding: 2rem;
-  max-width: 900px;
-  margin: auto;
-  border-radius: 15px;
-  box-sizing: border-box;
-  text-align: center;
-}
-
-/* Botón volver en entrenador */
-#btnVolverInicio {
-  margin-top: 2rem;
-  background-color: #3776BC;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 25px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#btnVolverInicio:hover {
-  background-color: #2a5390;
-}
-
-
-
