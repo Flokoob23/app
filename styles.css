@@ -1,13 +1,15 @@
-/* Reset y fuentes */
-body, html {
-  margin: 0; padding: 0; height: 100%;
+/* Reset y base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
   font-family: 'Poppins', sans-serif;
-  background: black;
-  color: #FFD600;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -16,8 +18,11 @@ body, html {
   width: 100vw;
   height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
   opacity: 1;
   transition: opacity 1.2s ease;
 }
@@ -28,75 +33,38 @@ body, html {
 }
 
 /* Modo oscuro */
-.dark-mode {
+body.dark-mode {
   background-color: #121212;
   color: #FFD600;
 }
 
-.dark-mode .pantallaPerfil {
-  background-color: #222;
-  color: #FFD600;
-}
-
-.dark-mode #modalEntrenamientos {
-  background: #222;
+body.dark-mode .pantallaPerfil,
+body.dark-mode #modalEntrenamientos,
+body.dark-mode #pantallaHistorial {
+  background-color: #1e1e1e;
   color: #FFD600;
 }
 
 /* Modo claro */
-.modo-claro {
+body {
   background-color: white;
   color: black;
 }
 
-.modo-claro .pantallaPerfil,
-.modo-claro #modalEntrenamientos {
-  background: #f9f9f9;
-  color: black;
-}
-
-.modo-claro #pantallaGimnasio {
-  background-color: #ffecd2;
-  color: black;
-}
-
-.modo-claro .btn-iniciar,
-.modo-claro .form-login button {
-  background-color: #333;
-  color: #FFA500;
-}
-
-.modo-claro .btn-iniciar:hover,
-.modo-claro .form-login button:hover {
-  background-color: #555;
-}
-
-.modo-claro #toggleModo {
-  background-color: #333;
-  color: #FFD600;
-  border-color: #FFD600;
-}
-
-.modo-claro #toggleModo:hover {
-  background-color: #FFD600;
-  color: black;
-}
-
-/* Botón toggle modo */
+/* Botón de modo oscuro/claro */
 #toggleModo {
   position: fixed;
   top: 12px;
   right: 12px;
-  background: transparent;
-  border: 2px solid #FFD600;
+  z-index: 9999;
+  background-color: transparent;
   color: #FFD600;
-  padding: 0.5rem 1rem;
+  border: 2px solid #FFD600;
   border-radius: 25px;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   font-weight: 700;
-  user-select: none;
-  z-index: 9999;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 #toggleModo:hover {
@@ -104,43 +72,28 @@ body, html {
   color: black;
 }
 
-/* Pantalla 1 - Bienvenida */
-.bienvenida-contenedor {
-  text-align: center;
-}
-
+/* Bienvenida */
 .bienvenida-contenedor h1 {
-  font-size: 3.2rem;
-  margin: 0;
-  line-height: 1;
-}
-
-.subtitulo-flokoob {
-  font-size: 1rem;
-  color: #FFD600;
-  margin-top: 0.3rem;
-  margin-bottom: 1.5rem;
+  font-size: 3rem;
   letter-spacing: 1px;
-  font-weight: 400;
 }
 
 .logo-flokoob {
+  margin-top: 1rem;
   width: 120px;
   filter: brightness(1) saturate(5);
 }
 
-/* Pantalla 2 - Gimnasio */
-#pantallaGimnasio {
-  background-color: #FFA500;
-  color: black;
-  flex-direction: column;
-  text-align: center;
-  padding: 2rem;
+.subtitulo-flokoob {
+  font-size: 1.1rem;
+  margin-top: 0.3rem;
+  color: #FFD600;
 }
 
-.gimnasio-contenedor {
-  max-width: 400px;
-  width: 90%;
+/* Gimnasio */
+#pantallaGimnasio {
+  background: #FFA500;
+  color: black;
 }
 
 .gimnasio-titulo {
@@ -148,32 +101,22 @@ body, html {
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .icon-corredor {
   width: 50px;
-  height: 50px;
-}
-
-.gimnasio-titulo h2 {
-  font-size: 2rem;
-  margin: 0;
-  font-weight: 700;
-  user-select: none;
 }
 
 .btn-iniciar {
   background-color: black;
   color: #FFA500;
-  border: none;
   padding: 1rem 2rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border-radius: 40px;
+  border: none;
+  border-radius: 25px;
   cursor: pointer;
-  width: 100%;
-  margin-bottom: 1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
   transition: background-color 0.3s ease;
 }
 
@@ -182,55 +125,55 @@ body, html {
 }
 
 .form-login {
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-width: 300px;
+  width: 100%;
 }
 
 .form-login input {
-  padding: 0.9rem 1rem;
-  font-size: 1.1rem;
-  border-radius: 25px;
+  padding: 0.8rem;
+  font-size: 1rem;
   border: 2px solid black;
-  outline: none;
-}
-
-.form-login input:focus {
-  border-color: #333;
+  border-radius: 20px;
 }
 
 .form-login button {
   background-color: black;
   color: #FFA500;
   border: none;
-  padding: 1rem;
-  font-size: 1.2rem;
+  padding: 0.8rem;
   font-weight: 700;
-  border-radius: 30px;
+  border-radius: 25px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1.1rem;
 }
 
 .form-login button:hover {
   background-color: #333;
 }
 
-/* Pantalla 3 - Perfil */
+/* Perfil */
 .pantallaPerfil {
-  background: white;
-  color: #333;
-  flex-direction: column;
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
+  margin: 1rem auto;
+  background: white;
+  color: black;
   border-radius: 15px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .perfil-contenedor {
   display: flex;
-  align-items: center;
   gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .foto-perfil {
@@ -238,116 +181,110 @@ body, html {
   height: 130px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(0,0,0,0.2);
 }
 
 .info-atleta {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  justify-content: center;
+  gap: 1rem;
 }
 
 #nombreAtleta {
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: #222;
-  margin: 0;
-  user-select: none;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
-/* Estado de pago */
-#estadoPago {
-  margin-top: 1rem;
-  font-weight: 600;
-  color: #FFD600;
-}
-
-/* Botones perfil */
 .botones-perfil {
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .botones-perfil button {
-  flex: 1 1 150px;
-  padding: 0.9rem 0;
+  padding: 0.8rem 1.5rem;
   background-color: #3776BC;
   color: white;
   border: none;
   border-radius: 25px;
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  user-select: none;
 }
 
-.botones-perfil button:hover,
-.botones-perfil button:focus {
+.botones-perfil button:hover {
   background-color: #2a5390;
-  outline: none;
 }
 
-/* Entrenamientos & historial */
-#gimnasio-contenedor ul {
-  list-style: none;
-  padding: 0;
-}
-
-#gimnasio-contenedor ul li {
-  margin-bottom: 1rem;
-}
-
-/* Tabla historial carreras */
-.tabla-historial {
-  margin-top: 1rem;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.tabla-historial th,
-.tabla-historial td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.tabla-historial th {
-  background-color: #FFA500;
-  color: black;
-  text-align: left;
-}
-
-/* Pantalla modal entrenamientos */
+/* Entrenamientos */
 #modalEntrenamientos {
   background: white;
-  color: #333;
-  flex-direction: column;
+  color: black;
   max-width: 600px;
-  margin: 2rem auto;
-  padding: 1rem;
+  padding: 2rem;
   border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
   overflow-y: auto;
+  max-height: 90vh;
 }
 
-/* Modal Pago de Cuota */
+/* Historial */
+#pantallaHistorial table {
+  width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+}
+
+#pantallaHistorial th,
+#pantallaHistorial td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+}
+
+#pantallaHistorial th {
+  background: #FFA500;
+  color: black;
+}
+
+#pantallaHistorial form {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+#pantallaHistorial input,
+#pantallaHistorial button {
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+#pantallaHistorial button {
+  background: #3776BC;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#pantallaHistorial button:hover {
+  background: #2a5390;
+}
+
+/* Modal pago */
 #modalPago {
   position: fixed;
   top: 0; left: 0;
-  background: rgba(0,0,0,0.7);
-  width: 100vw;
-  height: 100vh;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10000;
-  display: none;
-}
-
-#modalPago:not(.hidden) {
-  display: flex;
 }
 
 #modalPago > div {
@@ -355,76 +292,70 @@ body, html {
   color: black;
   padding: 2rem;
   border-radius: 15px;
-  max-width: 450px;
-  width: 90%;
   text-align: center;
-  box-shadow: 0 0 15px #000;
-}
-
-#modalPagoTitulo {
-  margin-bottom: 1rem;
-}
-
-#aliasPago {
-  font-weight: 700;
-}
-
-#modalPago p {
-  margin: 0.3rem 0 1rem;
-}
-
-#inputComprobante {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  font-size: 1rem;
-  box-sizing: border-box;
-  margin-bottom: 1rem;
+  width: 90%;
+  max-width: 450px;
 }
 
 #mensajeComprobante {
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
   font-weight: 600;
   color: green;
-  display: none;
 }
 
-#modalPago button {
-  transition: background-color 0.3s ease;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 0.8rem 1.5rem;
-  cursor: pointer;
+#btnEnviarComprobante,
+#btnCerrarPago {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 0.5rem;
   border: none;
-  margin-bottom: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 #btnEnviarComprobante {
   background-color: #3776BC;
   color: white;
-  width: 100%;
-}
-
-#btnEnviarComprobante:hover:enabled {
-  background-color: #2a5390;
-}
-
-#btnEnviarComprobante:disabled {
-  background-color: #8ba4c4;
-  cursor: not-allowed;
 }
 
 #btnCerrarPago {
   background-color: #FFA500;
   color: black;
-  width: 100%;
 }
 
-#btnCerrarPago:hover {
-  opacity: 0.85;
+/* Pantalla GPS */
+#pantallaGPS {
+  background-color: #f0f0f0;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#mapa {
+  width: 90vw;
+  height: 70vh;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+#btnVolverPerfilGPS {
+  padding: 0.8rem 1.5rem;
+  background-color: #FFA500;
+  color: black;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+/* Pantalla entrenador */
+#pantallaEntrenador {
+  background: linear-gradient(135deg, #000, #FFD600);
+  color: black;
+  text-align: center;
+  gap: 1rem;
+  padding: 2rem;
 }
 
 
