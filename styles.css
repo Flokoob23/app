@@ -1,228 +1,290 @@
-/* Reset y fuentes */
-body, html {
-  margin: 0; padding: 0; height: 100%;
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: black;
+  background: #121212;
   color: #FFD600;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Pantallas */
+.dark-mode {
+  background-color: #121212;
+  color: #FFD600;
+}
+
+button {
+  background-color: #FFD600;
+  border: none;
+  border-radius: 30px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #121212;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0.5rem 0;
+  user-select: none;
+}
+
+button:hover {
+  background-color: #e0c900;
+}
+
+button:disabled,
+button[disabled] {
+  background-color: #999;
+  cursor: not-allowed;
+  color: #555;
+}
+
+input,
+select,
+textarea {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 2px solid #FFD600;
+  background: #1f1f1f;
+  color: #FFD600;
+  width: 100%;
+  max-width: 300px;
+  margin: 0.5rem 0;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #ffa500;
+  outline: none;
+}
+
+h1, h2, h3 {
+  margin: 0.5rem 0;
+  font-weight: 800;
+  color: #FFD600;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
 .pantalla {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 1;
-  transition: opacity 1.2s ease;
+  width: 100%;
+  max-width: 500px;
+  background-color: #1f1f1f;
+  border-radius: 20px;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 0 10px #ffd600aa;
+  transition: opacity 0.3s ease;
 }
 
 .hidden {
   display: none !important;
-  opacity: 0;
 }
 
-/* Botón toggle modo */
-#toggleModo {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  background: transparent;
-  border: 2px solid #FFD600;
-  color: #FFD600;
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: 700;
-  user-select: none;
-  z-index: 9999;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-#toggleModo:hover {
-  background-color: #FFD600;
-  color: black;
-}
-
-/* Bienvenida */
 .bienvenida-contenedor {
   text-align: center;
 }
 
-.bienvenida-contenedor h1 {
-  font-size: 3.2rem;
-  margin: 0;
-  line-height: 1;
-}
-
 .subtitulo-flokoob {
-  font-size: 1rem;
-  color: #FFD600;
-  margin-top: 0.3rem;
-  margin-bottom: 1.5rem;
-  letter-spacing: 1px;
-  font-weight: 400;
+  font-size: 1.3rem;
+  margin-top: -0.5rem;
+  font-weight: 600;
+  color: #ffd600cc;
 }
 
 .logo-flokoob {
-  width: 120px;
-  filter: brightness(1) saturate(5);
+  width: 150px;
+  margin-top: 1rem;
 }
 
-/* Pantalla inicio */
 .gimnasio-contenedor {
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .gimnasio-titulo {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ffd600;
 }
 
 .icon-corredor {
-  width: 50px;
-  height: 50px;
-}
-
-.gimnasio-titulo h2 {
-  font-size: 2rem;
-  margin: 0;
-  font-weight: 700;
-  user-select: none;
+  width: 40px;
 }
 
 .btn-iniciar {
-  background-color: black;
-  color: #FFA500;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border-radius: 40px;
-  cursor: pointer;
   width: 100%;
-  margin-bottom: 1rem;
-  transition: background-color 0.3s ease;
+  max-width: 300px;
 }
 
-.btn-iniciar:hover {
-  background-color: #333;
-}
-
-/* Form login */
 .form-login {
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-.form-login input, .form-login select {
-  padding: 0.9rem 1rem;
-  font-size: 1.1rem;
-  border-radius: 25px;
-  border: 2px solid black;
-  outline: none;
-}
-
-.form-login input:focus, .form-login select:focus {
-  border-color: #333;
-}
-
-.form-login button {
-  background-color: black;
-  color: #FFA500;
-  border: none;
-  padding: 1rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.form-login button:hover {
-  background-color: #333;
-}
-
-/* Perfil */
-.pantallaPerfil {
-  background: white;
-  color: #333;
-  flex-direction: column;
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 1rem;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-.perfil-contenedor {
-  display: flex;
   align-items: center;
-  gap: 2rem;
 }
 
 .foto-perfil {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  border-radius: 75px;
   object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  flex-shrink: 0;
+  border: 3px solid #ffd600;
+  margin-bottom: 1rem;
 }
 
 .info-atleta {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-#nombreAtleta {
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: #222;
-  margin: 0;
-  user-select: none;
-}
-
-#rolUsuario {
-  font-weight: 600;
-  color: #555;
+  text-align: center;
+  color: #ffd600;
 }
 
 .botones-perfil {
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1rem;
 }
 
 .botones-perfil button {
-  flex: 1 1 150px;
-  padding: 0.9rem 0;
-  background-color: #3776BC;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  flex: 1 1 120px;
+  max-width: 140px;
+}
+
+.tabla-historial {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  color: #ffd600;
+}
+
+.tabla-historial th,
+.tabla-historial td {
+  border: 1px solid #ffd600;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.tabla-historial th {
+  background-color: #333;
+}
+
+#modalPago > div {
+  background-color: #1f1f1f;
+  padding: 1.5rem;
+  border-radius: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+  color: #ffd600;
+}
+
+#mensajeComprobante {
+  margin-top: 0.5rem;
+  font-weight: 700;
+  display: none;
+}
+
+#mapa {
+  border-radius: 15px;
+  margin: 0 auto;
+  box-shadow: 0 0 12px #ffd600aa;
+}
+
+#toggleModo {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background-color: #ffd600;
+  color: #121212;
+  border-radius: 30px;
+  padding: 0.4rem 1rem;
+  font-weight: 700;
+  z-index: 1000;
   user-select: none;
 }
 
-.botones-perfil button:hover,
-.botones-perfil button:focus {
-  background-color: #2a5390;
-  outline: none;
+#pantallaEntrenador {
+  color: #ffd600;
+}
+
+#listaAlumnos {
+  margin-top: 1rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  background-color: #121212;
+  border-radius: 15px;
+  padding: 1rem;
+  box-shadow: 0 0 12px #ffd600aa;
+}
+
+#listaAlumnos ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#listaAlumnos li {
+  padding: 1rem;
+  border-bottom: 1px solid #444;
+}
+
+#listaAlumnos li:last-child {
+  border-bottom: none;
+}
+
+/* Scrollbar personalizado */
+#listaAlumnos::-webkit-scrollbar {
+  width: 8px;
+}
+
+#listaAlumnos::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+#listaAlumnos::-webkit-scrollbar-thumb {
+  background-color: #ffd600;
+  border-radius: 20px;
+  border: 2px solid #121212;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .pantalla {
+    max-width: 95vw;
+    padding: 1.2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
 }
