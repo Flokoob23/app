@@ -1,118 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FLOKOOB - APP DE ENTRENAMIENTO</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aurora Pop - Juego de Reflejos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="background-aurora" aria-hidden="true"></div>
+    <main class="game-shell">
+      <header class="game-header">
+        <h1>Aurora Pop</h1>
+        <p>Haz clic en el color correcto antes de que el tiempo se agote y crea la mejor racha posible.</p>
+      </header>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-
-  <!-- Config Firebase -->
-  <script src="firebase-config.js"></script>
-</head>
-<body>
-  <!-- Botón Modo Oscuro/Claro -->
-  <button id="toggleModo" aria-label="Cambiar modo oscuro/claro">🌙 Oscuro</button>
-
-  <!-- Pantalla de bienvenida -->
-  <div id="pantallaBienvenida" class="pantalla">
-    <div class="bienvenida-contenedor">
-      <h1>FLOKOOB</h1>
-      <p class="subtitulo-flokoob">APP DE ENTRENAMIENTO</p>
-      <img class="logo-flokoob" src="https://i.imgur.com/YOq1Gza.png" alt="Logo Flokoob" />
-    </div>
-  </div>
-
-  <!-- Pantalla principal -->
-  <div id="pantallaGimnasio" class="pantalla hidden">
-    <div class="gimnasio-contenedor">
-      <div class="gimnasio-titulo">
-        <img class="icon-corredor" src="https://i.imgur.com/6IWJ43U.png" alt="Icono corredor" />
-        <h2>TROTADORES ELOY</h2>
-      </div>
-      <button id="btnIniciarSesion" class="btn-iniciar">Iniciar sesión</button>
-      <form id="formLogin" class="form-login hidden">
-        <input id="emailInput" type="email" placeholder="Correo electrónico" required />
-        <input id="claveInput" type="password" placeholder="Clave" required />
-        <button id="btnLogin" type="button">Entrar</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Pantalla perfil atleta -->
-  <div id="pantallaPerfil" class="pantalla pantallaPerfil hidden">
-    <div class="perfil-contenedor">
-      <img id="fotoAtleta" src="https://via.placeholder.com/150?text=Sin+Foto" alt="Foto atleta" class="foto-perfil" />
-      <div class="info-atleta">
-        <h2 id="nombreAtleta">Atleta</h2>
-        <p id="estadoPago"></p>
-        <div class="botones-perfil">
-          <button id="btnEntrenamientos">🏋️‍♂️ Entrenamientos</button>
-          <button id="btnHistorial">📊 Historial</button>
-          <button id="btnGPS">📍 Mapa GPS</button>
-          <button id="btnPagoCuota">💰 Pagar</button>
+      <section class="game-dashboard" aria-live="polite">
+        <div class="dashboard-card" role="status">
+          <span class="label">Puntaje</span>
+          <span id="score" class="value">0</span>
         </div>
-      </div>
-    </div>
-  </div>
+        <div class="dashboard-card" role="status">
+          <span class="label">Tiempo</span>
+          <span id="time" class="value">30</span>
+        </div>
+        <div class="dashboard-card" role="status">
+          <span class="label">Racha</span>
+          <span id="streak" class="value">0</span>
+        </div>
+      </section>
 
-  <!-- Pantalla perfil entrenador -->
-  <div id="pantallaEntrenador" class="pantalla pantallaPerfil hidden">
-    <h2>Panel del Entrenador</h2>
-    <p>Próximamente: Rutinas, gestión de alumnos y análisis.</p>
-    <button id="btnVolverInicio">Cerrar sesión</button>
-  </div>
+      <section class="target-panel" aria-live="polite">
+        <p class="target-label">Tu misión es encontrar:</p>
+        <div id="targetName" class="target-name">Pulsa "Comenzar"</div>
+      </section>
 
-  <!-- Modal entrenamientos -->
-  <div id="modalEntrenamientos" class="pantalla hidden">
-    <h3>Entrenamientos</h3>
-    <div id="listaEntrenamientos"></div>
-    <button id="btnCerrarModal">Cerrar</button>
-  </div>
+      <section class="tiles-wrapper">
+        <div id="tilesGrid" class="tiles-grid" role="grid" aria-label="Tablero de colores"></div>
+      </section>
 
-  <!-- Pantalla historial -->
-  <div id="pantallaHistorial" class="pantalla pantallaPerfil hidden">
-    <h3>Historial de Carreras</h3>
-    <table id="tablaCarreras" class="tabla-historial"></table>
-    <form id="formCarrera">
-      <input id="eventoInput" type="text" placeholder="Evento" required />
-      <input id="distanciaInput" type="number" step="0.01" placeholder="Distancia km" required />
-      <input id="tiempoInput" type="text" placeholder="HH:MM:SS" required />
-      <button type="submit">Agregar carrera</button>
-    </form>
-    <button id="btnVolverPerfil2">Volver</button>
-  </div>
+      <section class="controls">
+        <button id="startButton" class="primary-button" type="button">Comenzar partida</button>
+        <p id="statusMessage" class="status-message" role="alert" aria-live="assertive"></p>
+      </section>
 
-  <!-- Modal pago -->
-  <div id="modalPago" class="pantalla hidden">
-    <div>
-      <h2>Pago de Cuota</h2>
-      <p><strong>Alias:</strong> desa2025</p>
-      <p><strong>Monto:</strong> $20.000</p>
-      <input type="file" id="inputComprobante" accept="image/*,.pdf" />
-      <div id="mensajeComprobante"></div>
-      <button id="btnEnviarComprobante" disabled>Enviar</button>
-      <button id="btnCerrarPago">Cancelar</button>
-    </div>
-  </div>
+      <section class="how-to-play" aria-labelledby="howToPlayTitle">
+        <h2 id="howToPlayTitle">¿Cómo jugar desde aquí?</h2>
+        <p>
+          Pulsa <strong>“Comenzar partida”</strong> para activar las fichas. Haz clic sobre la que coincide con el
+          nombre iluminado y acumula puntos antes de que el cronómetro llegue a cero. Puedes reiniciar en cualquier
+          momento con el mismo botón.
+        </p>
+        <p class="how-to-note">
+          Si abriste esta página desde tu computadora o móvil, ya estás listo: solo asegúrate de tener el volumen y la
+          vibración activados si quieres sentir cada acierto.
+        </p>
+      </section>
+    </main>
 
-  <!-- Zona GPS -->
-  <div id="pantallaGPS" class="pantalla hidden">
-    <h3>Recorrido en Tiempo Real</h3>
-    <div id="mapa" style="width: 90vw; height: 70vh; border-radius: 15px;"></div>
-    <button id="btnVolverPerfilGPS">Volver</button>
-  </div>
+    <div id="confettiContainer" class="confetti-container" aria-hidden="true"></div>
 
-  <!-- Scripts -->
-  <script src="app.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
