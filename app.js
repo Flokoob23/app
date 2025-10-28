@@ -1,304 +1,277 @@
-// firebase-config.js
-const firebaseConfig = {
-  apiKey: "AIzaSyB59Tq2XFfyg-CbfBNbMqqxpFuBZslmiwI",
-  authDomain: "sample-firebase-ai-app-d8fa8.firebaseapp.com",
-  projectId: "sample-firebase-ai-app-d8fa8",
-  storageBucket: "sample-firebase-ai-app-d8fa8.firebasestorage.app",
-  messagingSenderId: "350154894182",
-  appId: "1:350154894182:web:6a8782c44c7fa391c5f6a7"
+const palette = [
+  {
+    name: 'Coral Nebuloso',
+    gradient: ['#ff6f91', '#ff9671'],
+  },
+  {
+    name: 'Menta Glacial',
+    gradient: ['#00c9a7', '#92fe9d'],
+  },
+  {
+    name: 'Aurora Índigo',
+    gradient: ['#6a11cb', '#2575fc'],
+  },
+  {
+    name: 'Solar Mango',
+    gradient: ['#f7971e', '#ffd200'],
+  },
+  {
+    name: 'Galaxia Frambuesa',
+    gradient: ['#ff4b2b', '#ff416c'],
+  },
+  {
+    name: 'Oceáno Boreal',
+    gradient: ['#2bc0e4', '#eaecc6'],
+  },
+  {
+    name: 'Violeta Prisma',
+    gradient: ['#7f00ff', '#e100ff'],
+  },
+  {
+    name: 'Lima Eléctrica',
+    gradient: ['#a8ff78', '#78ffd6'],
+  },
+  {
+    name: 'Amanecer Candy',
+    gradient: ['#fcb045', '#fd1d1d'],
+  },
+];
+
+const praiseMessages = [
+  '¡Brillo total!',
+  '¡Combo reluciente!',
+  '¡Reflejos de campeón!',
+  '¡Ritmo perfecto!',
+  '¡Sigues encendido!',
+];
+
+const missMessages = [
+  'Casi lo tienes, sigue intentando.',
+  'Respira hondo y vuelve al ritmo.',
+  'El color escapó, pero no por mucho tiempo.',
+  'Sacude el polvo, la aurora te espera.',
+];
+
+const state = {
+  active: false,
+  targetIndex: null,
+  score: 0,
+  timeLeft: 30,
+  streak: 0,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage();
-
-// URLs CSV públicos
-const entrenamientosUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=2117349227&single=true&output=csv';
-const csvHistorialPublico = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGOmPSHY2_9u9bNQ3fO2n_wS5DHVDGo0T6Pkt1u15xUwwXLX5-Ukg3iTC7AWYHTiba0YiteOSJdKHZ/pub?gid=1367748190&single=true&output=csv';
-const sonidoConfirmacion = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_57497c6713.mp3');
+let countdownId = null;
+let roundTimeoutId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Elementos principales
-  const body = document.body;
-  const bienvenida = document.getElementById('pantallaBienvenida');
-  const gimnasio = document.getElementById('pantallaGimnasio');
-  const perfil = document.getElementById('pantallaPerfil');
-  const btnIniciarSesion = document.getElementById('btnIniciarSesion');
-  const formLogin = document.getElementById('formLogin');
-  const btnLogin = document.getElementById('btnLogin');
-  const btnIrEntrenamientos = document.getElementById('btnEntrenamientos');
-  const pantallaEntrenamientos = document.getElementById('modalEntrenamientos');
-  const contenedorEntrenamientos = document.getElementById('listaEntrenamientos');
-  const btnVolverPerfil = document.getElementById('btnCerrarModal');
-  const btnHistorial = document.getElementById('btnHistorial');
-  const pantallaHistorial = document.getElementById('pantallaHistorial');
-  const btnVolverPerfil2 = document.getElementById('btnVolverPerfil2');
-  const formCarrera = document.getElementById('formCarrera');
-  const tablaCarreras = document.getElementById('tablaCarreras');
-  const btnGPS = document.getElementById('btnGPS');
-  const pantallaGPS = document.getElementById('pantallaGPS');
-  const mapaContenedor = document.getElementById('mapa');
-  const btnVolverPerfilGPS = document.getElementById('btnVolverPerfilGPS');
-  const toggleModo = document.getElementById('toggleModo');
+  const tilesGrid = document.getElementById('tilesGrid');
+  const startButton = document.getElementById('startButton');
+  const targetName = document.getElementById('targetName');
+  const scoreValue = document.getElementById('score');
+  const timeValue = document.getElementById('time');
+  const streakValue = document.getElementById('streak');
+  const statusMessage = document.getElementById('statusMessage');
+  const confettiContainer = document.getElementById('confettiContainer');
 
-  // Modal pago cuota
-  const btnPagoCuota = document.getElementById('btnPagoCuota');
-  const modalPago = document.getElementById('modalPago');
-  const btnEnviarComprobante = document.getElementById('btnEnviarComprobante');
-  const btnCerrarPago = document.getElementById('btnCerrarPago');
-  const inputComprobante = document.getElementById('inputComprobante');
-  const mensajeComprobante = document.getElementById('mensajeComprobante');
-  const estadoPago = document.getElementById('estadoPago');
+  const tiles = palette.map((color, index) => {
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'color-tile';
+    tile.dataset.name = color.name;
+    tile.dataset.index = index;
+    tile.disabled = true;
+    const gradient = `linear-gradient(135deg, ${color.gradient[0]}, ${color.gradient[1]})`;
+    tile.style.setProperty('--tile-gradient', gradient);
 
-  // Zona entrenador
-  const pantallaEntrenador = document.getElementById('pantallaEntrenador');
-  const btnVolverInicio = document.getElementById('btnVolverInicio');
-
-  // ---------------- MODO OSCURO ----------------
-  const modoGuardado = localStorage.getItem('modo') || 'claro';
-  setModo(modoGuardado);
-  toggleModo.addEventListener('click', () => {
-    const nuevoModo = body.classList.contains('dark-mode') ? 'claro' : 'oscuro';
-    setModo(nuevoModo);
+    tile.addEventListener('click', () => handleSelection(index));
+    tilesGrid.appendChild(tile);
+    return tile;
   });
 
-  function setModo(modo) {
-    if (modo === 'oscuro') {
-      body.classList.add('dark-mode');
-      toggleModo.textContent = '🌞 Claro';
-    } else {
-      body.classList.remove('dark-mode');
-      toggleModo.textContent = '🌙 Oscuro';
+  startButton.addEventListener('click', startGame);
+
+  function startGame() {
+    if (countdownId) {
+      clearInterval(countdownId);
+      countdownId = null;
     }
-    localStorage.setItem('modo', modo);
-  }
-
-  // ---------------- BIENVENIDA -> GIMNASIO ----------------
-  setTimeout(() => {
-    bienvenida.style.opacity = 0;
-    setTimeout(() => {
-      bienvenida.classList.add('hidden');
-      gimnasio.classList.remove('hidden');
-      gimnasio.style.opacity = 0;
-      setTimeout(() => {
-        gimnasio.style.opacity = 1;
-      }, 50);
-    }, 1200);
-  }, 2500);
-
-  // ---------------- LOGIN ----------------
-  btnIniciarSesion.addEventListener('click', () => {
-    btnIniciarSesion.style.display = 'none';
-    formLogin.classList.remove('hidden');
-  });
-
-  btnLogin.addEventListener('click', () => {
-    const dni = document.getElementById('dniInput').value.trim();
-    const clave = document.getElementById('claveInput').value.trim();
-
-    if (dni === 'admin' && clave === 'admin123') {
-      mostrarEntrenador();
-      return;
+    if (roundTimeoutId) {
+      clearTimeout(roundTimeoutId);
+      roundTimeoutId = null;
     }
 
-    db.collection('usuarios').where('DNI', '==', dni).where('Clave', '==', clave)
-      .get().then(snapshot => {
-        if (!snapshot.empty) {
-          const doc = snapshot.docs[0];
-          const atleta = doc.data();
-          atleta.id = doc.id;
-          mostrarPerfil(atleta);
-        } else {
-          alert('DNI o clave incorrectos');
-        }
-      }).catch(error => {
-        console.error(error);
-        alert('Error al verificar credenciales');
-      });
-  });
+    state.active = true;
+    state.score = 0;
+    state.timeLeft = 30;
+    state.streak = 0;
+    state.targetIndex = null;
 
-  function mostrarPerfil(atleta) {
-    gimnasio.classList.add('hidden');
-    perfil.classList.remove('hidden');
-    document.getElementById('nombreAtleta').textContent = atleta.Nombre;
-    document.getElementById('fotoAtleta').src = atleta.Foto || 'https://via.placeholder.com/150?text=Sin+Foto';
-    perfil.setAttribute('data-dni', atleta.DNI);
-    estadoPago.textContent = 'Estado de pago: Pendiente de confirmación';
-  }
+    startButton.textContent = 'Reiniciar';
+    statusMessage.textContent = '¡Atrapa los colores brillantes y encadena combos!';
+    statusMessage.className = 'status-message highlight';
 
-  function mostrarEntrenador() {
-    gimnasio.classList.add('hidden');
-    pantallaEntrenador.classList.remove('hidden');
-  }
+    updateDashboard();
+    setTargetName('Pulsa en el brillo correcto', '#ffffff', 'rgba(255,255,255,0.35)');
 
-  btnVolverInicio.addEventListener('click', () => {
-    pantallaEntrenador.classList.add('hidden');
-    gimnasio.classList.remove('hidden');
-  });
-
-  // ---------------- ENTRENAMIENTOS ----------------
-  btnIrEntrenamientos.addEventListener('click', () => {
-    const dni = perfil.getAttribute('data-dni');
-    if (!dni) return;
-
-    perfil.classList.add('hidden');
-    pantallaEntrenamientos.classList.remove('hidden');
-    contenedorEntrenamientos.innerHTML = 'Cargando entrenamientos...';
-
-    Papa.parse(entrenamientosUrl, {
-      download: true,
-      header: false,
-      complete: function (results) {
-        const data = results.data.filter(row => row[0] === dni);
-        let html = '';
-
-        data.forEach(row => {
-          const fecha = row[1];
-          const ejercicios = row.slice(2).filter(Boolean);
-          html += `<p><strong>Fecha:</strong> ${fecha}</p><ul>`;
-          ejercicios.forEach(ej => {
-            const query = encodeURIComponent(ej);
-            html += `<li>${ej} <a href="https://www.google.com/search?q=${query}" target="_blank">🔍</a></li>`;
-          });
-          html += '</ul><hr>';
-        });
-
-        contenedorEntrenamientos.innerHTML = html || '<p>No se encontraron entrenamientos.</p>';
-      },
-      error: () => {
-        contenedorEntrenamientos.innerHTML = '<p>Error al cargar entrenamientos.</p>';
-      }
+    tiles.forEach(tile => {
+      tile.disabled = false;
+      tile.classList.remove('is-target', 'correct', 'wrong');
     });
-  });
 
-  btnVolverPerfil.addEventListener('click', () => {
-    pantallaEntrenamientos.classList.add('hidden');
-    perfil.classList.remove('hidden');
-  });
-
-  // ---------------- HISTORIAL ----------------
-  btnHistorial.addEventListener('click', () => {
-    perfil.classList.add('hidden');
-    pantallaHistorial.classList.remove('hidden');
-    cargarHistorial();
-  });
-
-  btnVolverPerfil2.addEventListener('click', () => {
-    pantallaHistorial.classList.add('hidden');
-    perfil.classList.remove('hidden');
-  });
-
-  formCarrera.addEventListener('submit', e => {
-    e.preventDefault();
-    const evento = document.getElementById('eventoInput').value.trim();
-    const distancia = parseFloat(document.getElementById('distanciaInput').value.trim());
-    const tiempo = document.getElementById('tiempoInput').value.trim();
-    const dni = perfil.getAttribute('data-dni');
-    if (!evento || !distancia || !tiempo || !dni) return alert('Completá todos los campos.');
-
-    db.collection('historial').add({ dni, evento, distancia, tiempo })
-      .then(() => {
-        alert('Carrera agregada');
-        formCarrera.reset();
-        cargarHistorial();
-      }).catch(() => alert('Error al guardar carrera.'));
-  });
-
-  function cargarHistorial() {
-    const dni = perfil.getAttribute('data-dni');
-    if (!dni) return;
-
-    db.collection('historial').where('dni', '==', dni)
-      .get().then(snapshot => {
-        if (snapshot.empty) {
-          tablaCarreras.innerHTML = '<tr><td>No hay datos</td></tr>';
-          return;
-        }
-
-        let html = `
-          <thead>
-            <tr><th>Evento</th><th>Distancia</th><th>Tiempo</th><th>Ritmo</th></tr>
-          </thead><tbody>`;
-
-        snapshot.forEach(doc => {
-          const { evento, distancia, tiempo } = doc.data();
-          const ritmo = calcularRitmo(tiempo, distancia);
-          html += `<tr><td>${evento}</td><td>${distancia}</td><td>${tiempo}</td><td>${ritmo}</td></tr>`;
-        });
-
-        html += '</tbody>';
-        tablaCarreras.innerHTML = html;
-      });
+    nextRound(150);
+    countdownId = setInterval(() => {
+      state.timeLeft -= 1;
+      timeValue.textContent = state.timeLeft;
+      if (state.timeLeft <= 0) {
+        endGame();
+      }
+    }, 1000);
   }
 
-  function calcularRitmo(tiempoStr, distancia) {
-    const [h, m, s] = tiempoStr.split(':').map(Number);
-    const segundosTotales = (h || 0) * 3600 + (m || 0) * 60 + (s || 0);
-    const ritmo = segundosTotales / distancia;
-    return `${Math.floor(ritmo / 60)}:${Math.round(ritmo % 60).toString().padStart(2, '0')}`;
-  }
-
-  // ---------------- GPS MAPA ----------------
-  let map, recorrido = [];
-
-  btnGPS.addEventListener('click', () => {
-    perfil.classList.add('hidden');
-    pantallaGPS.classList.remove('hidden');
-
-    if (!map) {
-      map = L.map('mapa').setView([-34.6, -58.4], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  function nextRound(delay = 0) {
+    if (roundTimeoutId) {
+      clearTimeout(roundTimeoutId);
     }
 
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(pos => {
-        const { latitude, longitude } = pos.coords;
-        const nueva = [latitude, longitude];
-        recorrido.push(nueva);
-        L.marker(nueva).addTo(map);
-        if (recorrido.length > 1) {
-          L.polyline(recorrido, { color: 'blue' }).addTo(map);
+    roundTimeoutId = setTimeout(() => {
+      const previousIndex = state.targetIndex;
+      if (previousIndex !== null) {
+        tiles[previousIndex].classList.remove('is-target');
+      }
+
+      let newIndex = Math.floor(Math.random() * palette.length);
+      if (palette.length > 1) {
+        while (newIndex === previousIndex) {
+          newIndex = Math.floor(Math.random() * palette.length);
         }
-        map.setView(nueva, 15);
-      });
+      }
+
+      state.targetIndex = newIndex;
+      const color = palette[newIndex];
+      tiles[newIndex].classList.add('is-target');
+
+      const accent = color.gradient[1];
+      const glow = `${color.gradient[0]}88`;
+      setTargetName(color.name, accent, glow);
+    }, delay);
+  }
+
+  function handleSelection(index) {
+    if (!state.active) return;
+
+    const tile = tiles[index];
+    if (index === state.targetIndex) {
+      state.streak += 1;
+      const basePoints = 20;
+      const bonus = Math.max(0, state.streak - 1) * 5;
+      state.score += basePoints + bonus;
+      updateDashboard();
+
+      tile.classList.remove('wrong');
+      tile.classList.add('correct');
+      setTimeout(() => tile.classList.remove('correct'), 450);
+
+      const celebration = praiseMessages[Math.floor(Math.random() * praiseMessages.length)];
+      statusMessage.textContent = `${celebration} +${basePoints + bonus} pts`;
+      statusMessage.className = 'status-message highlight';
+
+      nextRound(260);
     } else {
-      alert('GPS no soportado');
+      state.streak = 0;
+      state.score = Math.max(0, state.score - 10);
+      updateDashboard();
+
+      tile.classList.remove('correct');
+      tile.classList.add('wrong');
+      setTimeout(() => tile.classList.remove('wrong'), 550);
+
+      const encouragement = missMessages[Math.floor(Math.random() * missMessages.length)];
+      statusMessage.textContent = encouragement;
+      statusMessage.className = 'status-message muted';
+
+      if (navigator.vibrate) {
+        navigator.vibrate(40);
+      }
     }
-  });
+  }
 
-  btnVolverPerfilGPS.addEventListener('click', () => {
-    pantallaGPS.classList.add('hidden');
-    perfil.classList.remove('hidden');
-  });
+  function endGame() {
+    state.active = false;
+    clearInterval(countdownId);
+    countdownId = null;
+    clearTimeout(roundTimeoutId);
+    roundTimeoutId = null;
 
-  // ---------------- PAGO CUOTA ----------------
-  btnPagoCuota.addEventListener('click', () => {
-    modalPago.classList.remove('hidden');
-    mensajeComprobante.style.display = 'none';
-    btnEnviarComprobante.disabled = true;
-    inputComprobante.value = '';
-  });
+    tiles.forEach(tile => {
+      tile.disabled = true;
+      tile.classList.remove('is-target');
+    });
 
-  btnCerrarPago.addEventListener('click', () => {
-    modalPago.classList.add('hidden');
-  });
+    const finalMessage = state.score >= 200
+      ? '¡Aurora épica! Tu puntaje fue ' + state.score
+      : 'Tiempo agotado. Puntaje final: ' + state.score;
 
-  inputComprobante.addEventListener('change', () => {
-    btnEnviarComprobante.disabled = !inputComprobante.files.length;
-  });
+    statusMessage.textContent = finalMessage;
+    statusMessage.className = 'status-message highlight';
+    setTargetName('Juego terminado', '#ffffff', 'rgba(255,255,255,0.25)');
+    timeValue.textContent = '0';
 
-  btnEnviarComprobante.addEventListener('click', () => {
-    mensajeComprobante.textContent = 'Enviando...';
-    mensajeComprobante.style.display = 'block';
-    sonidoConfirmacion.play();
+    if (state.score >= 200) {
+      launchConfetti();
+    }
+  }
 
-    setTimeout(() => {
-      mensajeComprobante.textContent = '¡Comprobante enviado!';
-      estadoPago.textContent = 'Comprobante enviado. Pendiente de confirmación.';
-      setTimeout(() => modalPago.classList.add('hidden'), 3000);
-    }, 2000);
-  });
+  function updateDashboard() {
+    scoreValue.textContent = state.score;
+    timeValue.textContent = state.timeLeft;
+    streakValue.textContent = state.streak;
+  }
+
+  function setTargetName(text, color, glow) {
+    targetName.textContent = text;
+    targetName.style.color = color;
+    targetName.style.textShadow = `0 0 18px ${glow}`;
+  }
+
+  function launchConfetti() {
+    const pieces = 28;
+    for (let i = 0; i < pieces; i++) {
+      const piece = document.createElement('span');
+      piece.className = 'confetti-piece';
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = randomGradientColor();
+      piece.style.setProperty('--x-start', `${Math.random() * 40 - 20}%`);
+      piece.style.setProperty('--x-end', `${Math.random() * 80 - 40}%`);
+      const duration = 3 + Math.random() * 1.5;
+      piece.style.animationDuration = `${duration}s`;
+      piece.style.animationDelay = `${Math.random() * 0.3}s`;
+
+      confettiContainer.appendChild(piece);
+      setTimeout(() => {
+        piece.remove();
+      }, duration * 1000 + 400);
+    }
+  }
+
+  function randomGradientColor() {
+    const colors = palette[Math.floor(Math.random() * palette.length)].gradient;
+    const mix = Math.random();
+    const hexToRgb = hex => {
+      const value = hex.replace('#', '');
+      const bigint = parseInt(value, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return { r, g, b };
+    };
+
+    const colorA = hexToRgb(colors[0]);
+    const colorB = hexToRgb(colors[1]);
+
+    const r = Math.round(colorA.r * (1 - mix) + colorB.r * mix);
+    const g = Math.round(colorA.g * (1 - mix) + colorB.g * mix);
+    const b = Math.round(colorA.b * (1 - mix) + colorB.b * mix);
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
 });
